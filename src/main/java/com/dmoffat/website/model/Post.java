@@ -1,6 +1,7 @@
 package com.dmoffat.website.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,21 +12,62 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "post")
-public class Post {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String title;
+    private String author;
     private String content;
+    private boolean published = false;
 
-    @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @Column(name = "posted_on")
+    private LocalDateTime posted;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "post_tag",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> comments;
 
     public Post() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
+
+    public LocalDateTime getPosted() {
+        return posted;
+    }
+
+    public void setPosted(LocalDateTime posted) {
+        this.posted = posted;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public Long getId() {
@@ -61,10 +103,14 @@ public class Post {
     }
 
     private Post(Builder builder) {
-        id = builder.id;
-        content = builder.content;
-        tags = builder.tags;
-        comments = builder.comments;
+        setId(builder.id);
+        setTitle(builder.title);
+        setAuthor(builder.author);
+        setContent(builder.content);
+        setPublished(builder.published);
+        setPosted(builder.posted);
+        setTags(builder.tags);
+        setComments(builder.comments);
     }
 
     public void addTag(Tag tag) {
@@ -94,11 +140,16 @@ public class Post {
 
     public static final class Builder {
         private Long id;
+        private String title;
+        private String author;
         private String content;
+        private boolean published;
+        private LocalDateTime posted;
         private Set<Tag> tags;
         private List<Comment> comments;
 
         public Builder() {
+            published = false;
         }
 
         public Builder(Post copy) {
@@ -113,10 +164,31 @@ public class Post {
             return this;
         }
 
+        public Builder title(String val) {
+            title = val;
+            return this;
+        }
+
+        public Builder author(String val) {
+            author = val;
+            return this;
+        }
+
         public Builder content(String val) {
             content = val;
             return this;
         }
+
+        public Builder published(boolean val) {
+            published = val;
+            return this;
+        }
+
+        public Builder posted(LocalDateTime val) {
+            posted = val;
+            return this;
+        }
+
 
         public Builder tags(Set<Tag> val) {
             tags = val;

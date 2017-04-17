@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "post_comment")
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,14 +19,26 @@ public class Comment {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    private String name;
+
     public Comment() {
     }
 
     private Comment(Builder builder) {
-        id = builder.id;
-        content = builder.content;
-        post = builder.post;
+        setId(builder.id);
+        setContent(builder.content);
+        setPost(builder.post);
+        setName(builder.name);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public Long getId() {
         return id;
@@ -71,6 +83,7 @@ public class Comment {
         private Long id;
         private String content;
         private Post post;
+        private String name;
 
         public Builder() {
         }
@@ -93,6 +106,11 @@ public class Comment {
 
         public Builder post(Post val) {
             post = val;
+            return this;
+        }
+
+        public Builder name(String val) {
+            name = val;
             return this;
         }
 

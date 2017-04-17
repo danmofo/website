@@ -7,19 +7,20 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "tag")
-public class Tag {
+public class Tag extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String value;
 
     public Tag() {
     }
 
     private Tag(Builder builder) {
-        id = builder.id;
-        value = builder.value;
+        setId(builder.id);
+        setValue(builder.value);
     }
 
     public Long getId() {
@@ -69,6 +70,7 @@ public class Tag {
             id = val;
             return this;
         }
+
 
         public Builder value(String val) {
             value = val;
