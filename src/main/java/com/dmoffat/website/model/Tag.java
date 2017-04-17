@@ -1,0 +1,82 @@
+package com.dmoffat.website.model;
+
+import javax.persistence.*;
+
+/**
+ * Created by danielmoffat on 15/04/2017.
+ */
+@Entity
+@Table(name = "tag")
+public class Tag {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String value;
+
+    public Tag() {
+    }
+
+    private Tag(Builder builder) {
+        id = builder.id;
+        value = builder.value;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+
+        return value != null ? value.equals(tag.value) : tag.value == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return value != null ? value.hashCode() : 0;
+    }
+
+    public static final class Builder {
+        private Long id;
+        private String value;
+
+        public Builder() {
+        }
+
+        public Builder(Tag copy) {
+            this.id = copy.id;
+            this.value = copy.value;
+        }
+
+        public Builder id(Long val) {
+            id = val;
+            return this;
+        }
+
+        public Builder value(String val) {
+            value = val;
+            return this;
+        }
+
+        public Tag build() {
+            return new Tag(this);
+        }
+    }
+}
