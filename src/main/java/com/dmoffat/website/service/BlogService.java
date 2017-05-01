@@ -41,7 +41,7 @@ public interface BlogService {
 
     /** Post queries **/
     Post findPostById(Long id);
-    Post findPostByAuthor(String authorName);
-    Post findPostByDate(LocalDateTime date);
-    Post findPostBetween(LocalDateTime start, LocalDateTime end);
+    List<Post> findPostByAuthor(String authorName);
+    List<Post> findPostByDate(LocalDateTime date);
+    List<Post> findPostBetween(LocalDateTime start, LocalDateTime end);
 }

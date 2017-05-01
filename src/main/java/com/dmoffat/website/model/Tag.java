@@ -8,11 +8,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tag")
 public class Tag extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     private String value;
 
     public Tag() {
@@ -21,14 +16,6 @@ public class Tag extends BaseEntity {
     private Tag(Builder builder) {
         setId(builder.id);
         setValue(builder.value);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getValue() {

@@ -51,7 +51,7 @@ public class BlogServiceImpl implements BlogService {
         Tag tag = tagDao.findOneByValue(value);
 
         // If the tag doesn't exist, return a new object representing it. If this
-        // is added a post, it will be persisted automatically.
+        // is added to a post, it will be persisted automatically.
         if(tag == null) {
             return new Tag.Builder().value(value).build();
         }
@@ -68,81 +68,127 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Post update(Post post) {
-        return null;
+        Objects.requireNonNull(post, "post cannot be null.");
+
+        return postDao.update(post);
     }
 
     @Override
     public void publish(Post post) {
+        Objects.requireNonNull(post, "post cannot be null");
 
+        post.setPublished(true);
+        postDao.update(post);
     }
 
     @Override
     public void hide(Post post) {
+        Objects.requireNonNull(post, "post cannot be null");
 
+        post.setPublished(false);
+        postDao.update(post);
     }
 
     @Override
     public void addTagTo(Post post, Tag tag) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(tag, "tag cannot be null");
 
+        post.addTag(tag);
+        postDao.update(post);
     }
 
     @Override
     public void addTagsTo(Post post, List<Tag> tags) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(tags, "tags cannot be null");
 
+        tags.forEach(tag -> post.addTag(tag));
+        postDao.update(post);
     }
 
     @Override
     public void removeTagFrom(Post post, Tag tag) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(tag, "tag cannot be null");
 
+        post.removeTag(tag);
+        postDao.update(post);
     }
 
     @Override
     public void removeTagsFrom(Post post, List<Tag> tags) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(tags, "tags cannot be null");
 
+        tags.forEach(tag -> post.removeTag(tag));
+        postDao.update(post);
     }
 
     @Override
     public void addCommentTo(Post post, Comment comment) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(comment, "comment cannot be null");
 
+        post.addComment(comment);
+        comment.setPost(post);
+        postDao.update(post);
     }
 
     @Override
     public void removeCommentFrom(Post post, Comment comment) {
+        Objects.requireNonNull(post, "post cannot be null");
+        Objects.requireNonNull(comment, "comment cannot be null");
 
+        post.removeComment(comment);
+        comment.setPost(null);
+        postDao.update(post);
     }
 
     @Override
     public void remove(Comment comment) {
+        Objects.requireNonNull(comment, "comment cannot be null");
 
+        comment.setPost(null);
+        commentDao.delete(comment);
     }
 
     @Override
     public List<Tag> findAllTags() {
-        return null;
+        return tagDao.findAll();
     }
 
     @Override
     public List<Comment> findAllComments() {
-        return null;
+        return commentDao.findAll();
     }
 
     @Override
     public Post findPostById(Long id) {
-        return null;
+        Objects.requireNonNull(id, "id cannot be null");
+
+        return postDao.read(id);
     }
 
     @Override
-    public Post findPostByAuthor(String authorName) {
-        return null;
+    public List<Post> findPostByAuthor(String authorName) {
+        Objects.requireNonNull(authorName, "authorName cannot be null");
+
+        return postDao.findAllPostsByAuthor(authorName, true);
     }
 
     @Override
-    public Post findPostByDate(LocalDateTime date) {
-        return null;
+    public List<Post> findPostByDate(LocalDateTime date) {
+        Objects.requireNonNull(date, "date cannot be null");
+
+        return postDao.findAllPostsByDate(date, true);
     }
 
     @Override
-    public Post findPostBetween(LocalDateTime start, LocalDateTime end) {
-        return null;
+    public List<Post> findPostBetween(LocalDateTime start, LocalDateTime end) {
+        Objects.requireNonNull(start, "startDate cannot be null");
+        Objects.requireNonNull(end, "endDate cannot be null");
+
+        return postDao.findAllPostsByDateBetween(start, end, true);
     }
 }

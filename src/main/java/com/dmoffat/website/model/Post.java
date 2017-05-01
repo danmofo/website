@@ -13,10 +13,6 @@ import java.util.Set;
 @Entity
 @Table(name = "post")
 public class Post extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String title;
     private String author;
     private String content;
@@ -32,7 +28,7 @@ public class Post extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
     private List<Comment> comments;
 
     public Post() {
@@ -68,14 +64,6 @@ public class Post extends BaseEntity {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getContent() {
@@ -203,5 +191,18 @@ public class Post extends BaseEntity {
         public Post build() {
             return new Post(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Post{");
+        sb.append("id=").append(id);
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", author='").append(author).append('\'');
+        sb.append(", content='").append(content).append('\'');
+        sb.append(", published=").append(published);
+        sb.append(", posted=").append(posted);
+        sb.append('}');
+        return sb.toString();
     }
 }

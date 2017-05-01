@@ -16,7 +16,6 @@ import java.util.List;
  */
 @Controller
 public class BlogController {
-
     private static final Logger logger = LogManager.getLogger(BlogController.class);
 
     private BlogService blogService;

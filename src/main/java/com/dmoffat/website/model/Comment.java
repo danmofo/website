@@ -9,10 +9,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "post_comment")
 public class Comment extends BaseEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,15 +35,6 @@ public class Comment extends BaseEntity {
         this.name = name;
     }
 
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getContent() {
         return content;
     }
@@ -71,12 +58,17 @@ public class Comment extends BaseEntity {
 
         Comment comment = (Comment) o;
 
-        return id != null ? id.equals(comment.id) : comment.id == null;
+        if (id != null ? !id.equals(comment.id) : comment.id != null) return false;
+        if (content != null ? !content.equals(comment.content) : comment.content != null) return false;
+        return name != null ? name.equals(comment.name) : comment.name == null;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 
     public static final class Builder {
