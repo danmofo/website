@@ -1,6 +1,6 @@
 <#import "layouts/general.ftl" as layout />
 <@layout.general>
-    <h1>Hello world!</h1>
+    <h1>Home</h1>
 
     <#list posts as post>
         <div class="post">

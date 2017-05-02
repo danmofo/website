@@ -1,7 +1,6 @@
-package com.dmoffat;
+package com.dmoffat.website.service;
 
 import com.dmoffat.website.model.Comment;
-import com.dmoffat.website.service.CommentService;
 import com.dmoffat.website.service.impl.MarkdownCommentService;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;

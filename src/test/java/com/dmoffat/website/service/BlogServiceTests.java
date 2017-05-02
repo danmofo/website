@@ -1,10 +1,9 @@
-package com.dmoffat;
+package com.dmoffat.website.service;
 
 import com.dmoffat.website.BlogApplication;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
-import com.dmoffat.website.service.BlogService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +54,7 @@ public class BlogServiceTests {
 				.author("Dan")
 				.content("My test post")
 				.title("My title")
+				.permalink("post")
 				.build();
 
 		blogService.save(post);
@@ -64,6 +64,7 @@ public class BlogServiceTests {
 				.content("My test post")
 				.title("My title")
 				.published(true)
+				.permalink("published-post")
 				.build();
 
 		blogService.save(publishedPost);
@@ -72,6 +73,7 @@ public class BlogServiceTests {
 				.author("Danz")
 				.content("My test post 2")
 				.title("My title2")
+				.permalink("post-with-tags")
 				.build();
 
 		this.tag = new Tag.Builder().value("testtag").build();
@@ -86,7 +88,7 @@ public class BlogServiceTests {
 
 		this.basicComment = new Comment.Builder().name("Daniel").post(post).content("This is a great post.").build();
 
-		this.postWithComment = new Post.Builder(post).build();
+		this.postWithComment = new Post.Builder(post).permalink("foobar").build();
 		this.postWithComment.addComment(basicComment);
 
 		blogService.save(postWithComment);
@@ -102,6 +104,7 @@ public class BlogServiceTests {
 					.author("D")
 					.content("asdf")
 					.title("asddd")
+					.permalink("asdf")
 					.build();
 
 		assertNull(post2.getId());
@@ -112,10 +115,10 @@ public class BlogServiceTests {
 
 	@Test
 	public void updatePost() throws Exception {
-		post.setAuthor("John");
+		post.setAuthor("Chrissy");
 		blogService.update(post);
 
-		assertNotNull(blogService.findPostByAuthor("John"));
+		assertNotNull(blogService.findPostByAuthor("Chrissy"));
 	}
 
 	@Test
@@ -191,5 +194,6 @@ public class BlogServiceTests {
 		assertNotNull(blogService.findPostBetween(post.getCreated().minusDays(1), post.getCreated().plusDays(1)));
 		assertNotNull(blogService.findPostByDate(post.getCreated()));
 		assertNotNull(blogService.findPostById(post.getId()));
+		assertNotNull(blogService.findRecentPosts());
 	}
 }

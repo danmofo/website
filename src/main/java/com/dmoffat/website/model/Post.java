@@ -14,6 +14,7 @@ import java.util.Set;
 @Table(name = "post")
 public class Post extends BaseEntity {
     private String title;
+    private String permalink;
     private String author;
     private String content;
     private boolean published = false;
@@ -32,6 +33,14 @@ public class Post extends BaseEntity {
     private List<Comment> comments;
 
     public Post() {
+    }
+
+    public String getPermalink() {
+        return permalink;
+    }
+
+    public void setPermalink(String permalink) {
+        this.permalink = permalink;
     }
 
     public String getTitle() {
@@ -92,7 +101,10 @@ public class Post extends BaseEntity {
 
     private Post(Builder builder) {
         setId(builder.id);
+        setCreated(builder.created);
         setTitle(builder.title);
+        setUpdated(builder.updated);
+        setPermalink(builder.permalink);
         setAuthor(builder.author);
         setContent(builder.content);
         setPublished(builder.published);
@@ -128,7 +140,10 @@ public class Post extends BaseEntity {
 
     public static final class Builder {
         private Long id;
+        private LocalDateTime created;
         private String title;
+        private LocalDateTime updated;
+        private String permalink;
         private String author;
         private String content;
         private boolean published;
@@ -152,8 +167,23 @@ public class Post extends BaseEntity {
             return this;
         }
 
+        public Builder created(LocalDateTime val) {
+            created = val;
+            return this;
+        }
+
         public Builder title(String val) {
             title = val;
+            return this;
+        }
+
+        public Builder updated(LocalDateTime val) {
+            updated = val;
+            return this;
+        }
+
+        public Builder permalink(String val) {
+            permalink = val;
             return this;
         }
 
@@ -193,6 +223,8 @@ public class Post extends BaseEntity {
         }
     }
 
+
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Post{");
@@ -205,4 +237,6 @@ public class Post extends BaseEntity {
         sb.append('}');
         return sb.toString();
     }
+
+
 }

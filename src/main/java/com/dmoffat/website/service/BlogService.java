@@ -44,4 +44,5 @@ public interface BlogService {
     List<Post> findPostByAuthor(String authorName);
     List<Post> findPostByDate(LocalDateTime date);
     List<Post> findPostBetween(LocalDateTime start, LocalDateTime end);
+    List<Post> findRecentPosts();
 }

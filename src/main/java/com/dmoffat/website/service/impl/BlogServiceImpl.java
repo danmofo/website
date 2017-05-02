@@ -7,6 +7,7 @@ import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.service.BlogService;
+import com.dmoffat.website.util.time.TimeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,14 @@ public class BlogServiceImpl implements BlogService {
     private PostDao postDao;
     private CommentDao commentDao;
     private TagDao tagDao;
+    private TimeProvider timeProvider;
 
     @Autowired
-    public BlogServiceImpl(PostDao postDao, CommentDao commentDao, TagDao tagDao) {
+    public BlogServiceImpl(PostDao postDao, CommentDao commentDao, TagDao tagDao, TimeProvider timeProvider) {
         this.postDao = postDao;
         this.commentDao = commentDao;
         this.tagDao = tagDao;
+        this.timeProvider = timeProvider;
     }
 
     @Override
@@ -190,5 +193,10 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(end, "endDate cannot be null");
 
         return postDao.findAllPostsByDateBetween(start, end, true);
+    }
+
+    @Override
+    public List<Post> findRecentPosts() {
+        return findPostBetween(timeProvider.now().minusMonths(1), timeProvider.now());
     }
 }
