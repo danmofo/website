@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest
+@SpringBootTest({"auth.secret=test_secret"})
 public class AuthenticationTests {
 
     @Test

@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest
+@SpringBootTest({"auth.secret=test_secret"})
 public class BlogControllerTests {
 
     @Autowired

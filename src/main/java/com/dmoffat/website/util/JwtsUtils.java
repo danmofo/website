@@ -14,7 +14,7 @@ public class JwtsUtils {
     private static final Logger logger = LogManager.getLogger(JwtsUtils.class);
     private String secret;
 
-    public JwtsUtils(@Value("${com.dmoffat.auth.secret}") String secret) {
+    public JwtsUtils(@Value("${auth.secret}") String secret) {
         this.secret = secret;
     }
 

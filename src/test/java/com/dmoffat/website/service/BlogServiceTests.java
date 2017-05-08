@@ -30,7 +30,9 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BlogApplication.class)
+@SpringBootTest(
+		classes = BlogApplication.class,
+		properties = {"auth.secret=test_secret"})
 @Transactional
 public class BlogServiceTests {
 

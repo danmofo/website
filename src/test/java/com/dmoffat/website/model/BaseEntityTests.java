@@ -20,7 +20,9 @@ import static org.junit.Assert.assertNotNull;
  * @author dan
  */
 
-@SpringBootTest(classes = BlogApplication.class)
+@SpringBootTest(
+        classes = BlogApplication.class,
+        properties = {"auth.secret=test_secret"})
 @Transactional
 @RunWith(SpringRunner.class)
 public class BaseEntityTests {
