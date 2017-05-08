@@ -20,7 +20,7 @@ public class JwtsUtils {
 
     public Jws<Claims> parse(String jws) {
         try {
-            return Jwts.parser().setSigningKey("secret").parseClaimsJws(jws);
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(jws);
         } catch (MalformedJwtException | SignatureException ex) {
             logger.error("Invalid JWS: " + ex.getMessage());
             return null;
@@ -30,7 +30,7 @@ public class JwtsUtils {
     public String createJwsFor(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .signWith(SignatureAlgorithm.HS512, "secret")
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 }
