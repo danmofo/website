@@ -3,9 +3,6 @@ package com.dmoffat.website.controller;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.JwtsUtils;
-import com.dmoffat.website.util.WebUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,28 +28,6 @@ public class BlogController {
     public BlogController(BlogService blogService, JwtsUtils jwtsUtils) {
         this.blogService = blogService;
         this.jwtsUtils = jwtsUtils;
-    }
-
-    @RequestMapping(path = "/auth", method = RequestMethod.GET)
-    public String auth(HttpServletRequest request, HttpServletResponse response) {
-
-        Cookie cookie = WebUtils.findCookieByName(request, "auth").orElseGet(() -> {
-            Cookie c = new Cookie("auth", jwtsUtils.createJwsFor("admin"));
-            c.setMaxAge(Integer.MAX_VALUE);
-            c.setDomain("localhost");
-            response.addCookie(c);
-            return c;
-        });
-
-        Jws<Claims> claimsJwts = jwtsUtils.parse(cookie.getValue());
-
-        if(claimsJwts == null) {
-            System.out.println("Invalid, not authorised.");
-        } else {
-            System.out.println("AUTHORISED");
-        }
-
-        return "year";
     }
 
     // List the latest blog posts

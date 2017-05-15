@@ -1,5 +1,7 @@
 package com.dmoffat.website.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -9,10 +11,16 @@ import java.time.LocalDateTime;
  * @author dan
  */
 @MappedSuperclass
+@JsonIgnoreProperties(value = {"updated", "created", "id"})
 public class BaseEntity {
+
+    // For some strange reason that I don't quite understand - integration tests fail when
+    // trying to persist an entity that extends this class, probably because of the visibility on
+    // this field. Originally it was correctly set to "protected", but this caused all integration
+    // tests to fail with a "detached entity passed to persist" exception.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    public Long id;
 
     protected LocalDateTime created;
     protected LocalDateTime updated;

@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Locale;
-import java.util.Optional;
 
 /**
  * @author dan
@@ -43,13 +42,13 @@ public class AdminController {
     }
 
     private boolean isAuthenticated(HttpServletRequest request) {
-        Optional<Cookie> cookie = WebUtils.findCookieByName(request, "auth");
+        Cookie cookie = WebUtils.findCookieByName(request, "auth");
 
-        if(!cookie.isPresent()) {
+        if(cookie == null) {
             return false;
         }
 
-        return authenticationService.isValidToken(cookie.get().getValue());
+        return authenticationService.isValidToken(cookie.getValue());
     }
 
     @RequestMapping(value = "/management/auth", method = RequestMethod.GET)
@@ -64,7 +63,11 @@ public class AdminController {
     }
 
     @RequestMapping(value="/management/auth", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
-    public ResponseEntity<ApiResponse> restHandleLogin(@RequestBody User user) {
+    public ResponseEntity<ApiResponse> restHandleLogin(@RequestBody @Valid User user, BindingResult result) {
+        if(result.hasErrors()) {
+            return new ResponseEntity<ApiResponse>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
+        }
+
         if(authenticationService.login(user)) {
             return new ResponseEntity<>(new AuthenticationApiResponse(authenticationService.createTokenForUser(user)), HttpStatus.OK);
         }
@@ -78,13 +81,14 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/management/auth", method = RequestMethod.POST)
-    public String handleLogin(@Valid User user, BindingResult result, HttpServletResponse response) {
+    public String handleLogin(@Valid User user, BindingResult result, HttpServletResponse response, Model model) {
         if(result.hasErrors()) {
             return "login";
         }
 
         if(!authenticationService.login(user)) {
-            result.rejectValue("user", LOGIN_FAILED_ERROR_CODE);
+            result.rejectValue("username", LOGIN_FAILED_ERROR_CODE);
+            model.addAttribute("user", user);
             return "login";
         }
 

@@ -9,4 +9,5 @@ public interface AuthenticationService {
     String createTokenForUser(User user);
     boolean isValidToken(String token);
     boolean login(User user);
+    void create(User user);
 }

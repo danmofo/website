@@ -155,13 +155,6 @@ public class Post extends BaseEntity {
             published = false;
         }
 
-        public Builder(Post copy) {
-            this.id = copy.id;
-            this.content = copy.content;
-            this.tags = copy.tags;
-            this.comments = copy.comments;
-        }
-
         public Builder id(Long val) {
             id = val;
             return this;

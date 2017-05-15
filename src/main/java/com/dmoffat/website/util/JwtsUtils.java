@@ -21,7 +21,7 @@ public class JwtsUtils {
     public Jws<Claims> parse(String jws) {
         try {
             return Jwts.parser().setSigningKey(secret).parseClaimsJws(jws);
-        } catch (MalformedJwtException | SignatureException ex) {
+        } catch (MalformedJwtException | SignatureException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             logger.error("Invalid JWS: " + ex.getMessage());
             return null;
         }

@@ -5,6 +5,6 @@ package com.dmoffat.website.util;
  */
 public class StringUtils {
     public static boolean isBlank(String str) {
-        return str == null || str.equals("");
+        return str == null || str.trim().equals("");
     }
 }

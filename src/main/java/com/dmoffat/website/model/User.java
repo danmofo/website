@@ -1,5 +1,7 @@
 package com.dmoffat.website.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -9,7 +11,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name="user")
 public class User extends BaseEntity {
+
+    @NotEmpty
     private String username;
+
+    @NotEmpty
     private String password;
 
     public User() {

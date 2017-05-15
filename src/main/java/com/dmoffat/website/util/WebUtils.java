@@ -2,15 +2,13 @@ package com.dmoffat.website.util;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author dan
  */
 public class WebUtils {
-    public static Optional<Cookie> findCookieByName(HttpServletRequest request, String name) {
+    public static Cookie findCookieByName(HttpServletRequest request, String name) {
         Objects.requireNonNull(request, "Request cannot be null.");
 
         if(StringUtils.isBlank(name))
@@ -19,9 +17,15 @@ public class WebUtils {
         Cookie[] cookies = request.getCookies();
 
         if(cookies == null || cookies.length == 0) {
-            return Optional.empty();
+            return null;
         }
 
-        return Arrays.stream(cookies).filter(cookie -> cookie.getName().equals(name)).findAny();
+        for(Cookie c : cookies) {
+            if(c.getName().equals(name)) {
+                return c;
+            }
+        }
+
+        return null;
     }
 }

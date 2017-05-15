@@ -20,7 +20,7 @@ public class Config extends WebMvcConfigurerAdapter {
 
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(adminAuthenticationInterceptor)
-                .addPathPatterns("management", "/management/**")
+                .addPathPatterns("/management", "/management/**")
                 .excludePathPatterns("/management/auth");
     }
 

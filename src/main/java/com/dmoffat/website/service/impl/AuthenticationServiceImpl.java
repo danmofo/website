@@ -3,6 +3,7 @@ package com.dmoffat.website.service.impl;
 import com.dmoffat.website.dao.UserDao;
 import com.dmoffat.website.model.User;
 import com.dmoffat.website.service.AuthenticationService;
+import com.dmoffat.website.service.exception.UsernameAlreadyExistsException;
 import com.dmoffat.website.util.JwtsUtils;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         return BCrypt.checkpw(user.getPassword(), foundUser.getPassword());
+    }
+
+    @Override
+    public void create(User user) {
+        Objects.requireNonNull(user);
+        Objects.requireNonNull(user.getUsername());
+
+        User existing = userDao.findUserByUsername(user.getUsername());
+
+        if(existing != null) {
+            throw new UsernameAlreadyExistsException("The username " + user.getUsername() + " is already taken.");
+        }
+
+        // Hash the user's plaintext password
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(10)));
+
+        userDao.create(user);
     }
 }

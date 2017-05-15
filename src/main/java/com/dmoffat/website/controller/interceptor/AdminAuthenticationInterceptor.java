@@ -13,7 +13,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * @author dan
@@ -50,9 +49,9 @@ public class AdminAuthenticationInterceptor extends HandlerInterceptorAdapter {
         }
 
         // Web browser with cookies
-        Optional<Cookie> cookie = WebUtils.findCookieByName(request, "auth");
+        Cookie cookie = WebUtils.findCookieByName(request, "auth");
 
-        if(!cookie.isPresent() || !authenticationService.isValidToken(cookie.get().getValue())) {
+        if(cookie == null || !authenticationService.isValidToken(cookie.getValue())) {
             logger.info("User NOT authenticated.");
             response.sendRedirect("/management/auth");
             return true;

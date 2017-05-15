@@ -90,7 +90,11 @@ public class BlogServiceTests {
 
 		this.basicComment = new Comment.Builder().name("Daniel").post(post).content("This is a great post.").build();
 
-		this.postWithComment = new Post.Builder(post).permalink("foobar").build();
+		this.postWithComment = new Post.Builder()
+				.author("Dan")
+				.content("My test post")
+				.title("My title")
+				.permalink("foobar").build();
 		this.postWithComment.addComment(basicComment);
 
 		blogService.save(postWithComment);
