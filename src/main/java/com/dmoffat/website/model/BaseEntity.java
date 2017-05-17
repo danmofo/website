@@ -1,6 +1,8 @@
 package com.dmoffat.website.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +13,8 @@ import java.time.LocalDateTime;
  * @author dan
  */
 @MappedSuperclass
-@JsonIgnoreProperties(value = {"updated", "created", "id"})
+@JsonIgnoreProperties(value = {"updated", "id"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseEntity {
 
     // For some strange reason that I don't quite understand - integration tests fail when
@@ -22,6 +25,7 @@ public class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
     protected LocalDateTime created;
     protected LocalDateTime updated;
 

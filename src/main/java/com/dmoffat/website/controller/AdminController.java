@@ -1,10 +1,13 @@
 package com.dmoffat.website.controller;
 
+import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.User;
 import com.dmoffat.website.rest.ApiResponse;
 import com.dmoffat.website.rest.impl.AuthenticationApiResponse;
 import com.dmoffat.website.rest.impl.ErrorApiResponse;
+import com.dmoffat.website.rest.impl.SuccessApiResponse;
 import com.dmoffat.website.service.AuthenticationService;
+import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -34,11 +37,13 @@ public class AdminController {
 
     private MessageSource messageSource;
     private AuthenticationService authenticationService;
+    private BlogService blogService;
 
     @Autowired
-    public AdminController(MessageSource messageSource, AuthenticationService authenticationService) {
+    public AdminController(MessageSource messageSource, AuthenticationService authenticationService, BlogService blogService) {
         this.messageSource = messageSource;
         this.authenticationService = authenticationService;
+        this.blogService = blogService;
     }
 
     private boolean isAuthenticated(HttpServletRequest request) {
@@ -49,6 +54,22 @@ public class AdminController {
         }
 
         return authenticationService.isValidToken(cookie.getValue());
+    }
+
+    private static ResponseEntity<ApiResponse> validationError(BindingResult result) {
+        return new ResponseEntity<>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/management/post/new", method = RequestMethod.POST)
+    public ResponseEntity<ApiResponse> handleNewPost(@RequestBody @Valid Post newPost, BindingResult result) {
+
+        if(result.hasErrors()) {
+            return validationError(result);
+        }
+
+        blogService.save(newPost);
+
+        return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", newPost).build(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/management/auth", method = RequestMethod.GET)
@@ -65,7 +86,7 @@ public class AdminController {
     @RequestMapping(value="/management/auth", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
     public ResponseEntity<ApiResponse> restHandleLogin(@RequestBody @Valid User user, BindingResult result) {
         if(result.hasErrors()) {
-            return new ResponseEntity<ApiResponse>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
         }
 
         if(authenticationService.login(user)) {

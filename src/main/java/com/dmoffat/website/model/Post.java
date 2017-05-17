@@ -1,5 +1,7 @@
 package com.dmoffat.website.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,10 +15,23 @@ import java.util.Set;
 @Entity
 @Table(name = "post")
 public class Post extends BaseEntity {
+
+    @NotEmpty
     private String title;
+
+    // todo: validate this properly
+    @NotEmpty
     private String permalink;
+
+    @NotEmpty
     private String author;
+
+    @NotEmpty
     private String content;
+
+    @Column(name = "html_content")
+    private String htmlContent;
+
     private boolean published = false;
 
     @Column(name = "posted_on")
@@ -33,6 +48,14 @@ public class Post extends BaseEntity {
     private List<Comment> comments;
 
     public Post() {
+    }
+
+    public String getHtmlContent() {
+        return htmlContent;
+    }
+
+    public void setHtmlContent(String htmlContent) {
+        this.htmlContent = htmlContent;
     }
 
     public String getPermalink() {
@@ -100,16 +123,17 @@ public class Post extends BaseEntity {
     }
 
     private Post(Builder builder) {
-        setId(builder.id);
-        setCreated(builder.created);
         setTitle(builder.title);
-        setUpdated(builder.updated);
         setPermalink(builder.permalink);
         setAuthor(builder.author);
         setContent(builder.content);
+        setHtmlContent(builder.htmlContent);
         setPublished(builder.published);
         setPosted(builder.posted);
         setTags(builder.tags);
+        setId(builder.id);
+        setCreated(builder.created);
+        setUpdated(builder.updated);
         setComments(builder.comments);
     }
 
@@ -146,6 +170,7 @@ public class Post extends BaseEntity {
         private String permalink;
         private String author;
         private String content;
+        private String htmlContent;
         private boolean published;
         private LocalDateTime posted;
         private Set<Tag> tags;
@@ -190,6 +215,11 @@ public class Post extends BaseEntity {
             return this;
         }
 
+        public Builder htmlContent(String val) {
+            htmlContent = val;
+            return this;
+        }
+
         public Builder published(boolean val) {
             published = val;
             return this;
@@ -217,19 +247,18 @@ public class Post extends BaseEntity {
     }
 
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Post{");
-        sb.append("id=").append(id);
-        sb.append(", title='").append(title).append('\'');
+        sb.append("title='").append(title).append('\'');
+        sb.append(", permalink='").append(permalink).append('\'');
         sb.append(", author='").append(author).append('\'');
         sb.append(", content='").append(content).append('\'');
+        sb.append(", htmlContent='").append(htmlContent).append('\'');
         sb.append(", published=").append(published);
         sb.append(", posted=").append(posted);
+        sb.append(", comments=").append(comments);
         sb.append('}');
         return sb.toString();
     }
-
-
 }

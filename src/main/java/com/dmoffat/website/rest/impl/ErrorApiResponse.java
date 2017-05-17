@@ -16,7 +16,7 @@ public final class ErrorApiResponse implements ApiResponse {
         this.errorMessage = errorMessage;
     }
 
-    public static ErrorApiResponse fromBindingResult(BindingResult result) {
+    public static ApiResponse fromBindingResult(BindingResult result) {
         StringBuilder errorMessage = new StringBuilder("The following fields: ");
 
         for(FieldError fieldError : result.getFieldErrors()) {

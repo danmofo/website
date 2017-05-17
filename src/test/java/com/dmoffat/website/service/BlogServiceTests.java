@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  *
  * todo: use an in memory database purely for testing
  * todo: add profile for testing with a different config to production
- *
+ * todo: test blog post with markdown content...
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(

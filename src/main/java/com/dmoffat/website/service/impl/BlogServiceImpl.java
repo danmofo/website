@@ -8,6 +8,8 @@ import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.time.TimeProvider;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +29,17 @@ public class BlogServiceImpl implements BlogService {
     private TagDao tagDao;
     private TimeProvider timeProvider;
 
+    private Parser markdownParser;
+    private HtmlRenderer markdownRenderer;
+
     @Autowired
     public BlogServiceImpl(PostDao postDao, CommentDao commentDao, TagDao tagDao, TimeProvider timeProvider) {
         this.postDao = postDao;
         this.commentDao = commentDao;
         this.tagDao = tagDao;
         this.timeProvider = timeProvider;
+        this.markdownParser = Parser.builder().build();
+        this.markdownRenderer = HtmlRenderer.builder().build();
     }
 
     @Override
@@ -43,6 +50,8 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void save(Post post) {
         Objects.requireNonNull(post, "post cannot be null.");
+
+        post.setHtmlContent(markdownRenderer.render(markdownParser.parse(post.getContent())));
 
         postDao.create(post);
     }
