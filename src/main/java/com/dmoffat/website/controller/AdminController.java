@@ -17,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +58,7 @@ public class AdminController {
         return new ResponseEntity<>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/management/post/new", method = RequestMethod.POST)
+    @PostMapping("/management/post/new")
     public ResponseEntity<ApiResponse> handleNewPost(@RequestBody @Valid Post newPost, BindingResult result) {
 
         if(result.hasErrors()) {
@@ -72,7 +70,7 @@ public class AdminController {
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", newPost).build(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/management/auth", method = RequestMethod.GET)
+    @GetMapping("/management/auth")
     public String login(Model model, HttpServletRequest request) {
         if(isAuthenticated(request)) {
             return "redirect:/management/";
@@ -83,7 +81,7 @@ public class AdminController {
         return "login";
     }
 
-    @RequestMapping(value="/management/auth", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, method = RequestMethod.POST)
+    @PostMapping(value = "/management/auth", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<ApiResponse> restHandleLogin(@RequestBody @Valid User user, BindingResult result) {
         if(result.hasErrors()) {
             return new ResponseEntity<>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
@@ -96,12 +94,12 @@ public class AdminController {
         return new ResponseEntity<>(new ErrorApiResponse("100", messageSource.getMessage(LOGIN_FAILED_ERROR_CODE, null, Locale.ENGLISH)), HttpStatus.FORBIDDEN);
     }
 
-    @RequestMapping(value="/management/auth/error", method = RequestMethod.GET)
+    @GetMapping("/management/auth/error")
     public ResponseEntity<ApiResponse> restError() {
         return new ResponseEntity<>(new ErrorApiResponse("101", messageSource.getMessage(UNAUTHORISED_ERROR_CODE, null, Locale.ENGLISH)), HttpStatus.FORBIDDEN);
     }
 
-    @RequestMapping(value = "/management/auth", method = RequestMethod.POST)
+    @PostMapping("/management/auth")
     public String handleLogin(@Valid User user, BindingResult result, HttpServletResponse response, Model model) {
         if(result.hasErrors()) {
             return "login";
@@ -122,7 +120,7 @@ public class AdminController {
         return "redirect:/management/";
     }
 
-    @RequestMapping(value = "/management/", method = RequestMethod.GET)
+    @GetMapping("/management/")
     public String home() {
         return "/admin/home";
     }

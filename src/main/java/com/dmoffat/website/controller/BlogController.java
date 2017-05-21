@@ -7,9 +7,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class BlogController {
     }
 
     // List the latest blog posts
-    @RequestMapping(path = "/blog/", method = RequestMethod.GET)
+    @GetMapping(path = "/blog/")
     public String home(Model m) {
         List<Post> posts = blogService.findAllPosts();
 
@@ -38,25 +37,25 @@ public class BlogController {
     }
 
     // List all blog posts
-    @RequestMapping(path = "/blog/archive", method = RequestMethod.GET)
+    @GetMapping(path = "/blog/archive")
     public String archive(Model m) {
         m.addAttribute("posts", blogService.findAllPosts());
         return "archive";
     }
 
     // List all tags
-    @RequestMapping(path = "/blog/tags", method = RequestMethod.GET)
+    @GetMapping(path = "/blog/tags")
     public String tags() {
         return "tags";
     }
 
-    @RequestMapping(path = "/blog/{year}/", method = RequestMethod.GET)
+    @GetMapping(path = "/blog/{year}/")
     public String listPostsByYear(@PathVariable("year") Integer year) {
         System.out.println("Year: " + year);
         return "year";
     }
 
-    @RequestMapping(path = "/blog/{year}/{month}/", method = RequestMethod.GET)
+    @GetMapping(path = "/blog/{year}/{month}/")
     public String listPostsByYearAndMonth(@PathVariable("year") Integer year, @PathVariable("month") Integer month) {
         System.out.println("Year: " + year + ", month: " + month);
         return "month";
