@@ -34,7 +34,7 @@ public class BaseEntityTests {
 
     @Before
     public void setUp() throws Exception {
-        post = new Post.Builder().author("Daniel").content("Content").permalink("content").build();
+        post = new Post.Builder().title("test").author("Daniel").content("Content").permalink("content").build();
 
         postDao.create(post);
     }
