@@ -10,11 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @author dan
  */
 @Configuration
-public class Config extends WebMvcConfigurerAdapter {
+public class WebMvcConfig extends WebMvcConfigurerAdapter {
     private AdminAuthenticationInterceptor adminAuthenticationInterceptor;
 
     @Autowired
-    public Config(AdminAuthenticationInterceptor adminAuthenticationInterceptor) {
+    public WebMvcConfig(AdminAuthenticationInterceptor adminAuthenticationInterceptor) {
         this.adminAuthenticationInterceptor = adminAuthenticationInterceptor;
     }
 
