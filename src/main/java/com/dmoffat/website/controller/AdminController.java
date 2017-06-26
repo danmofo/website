@@ -9,6 +9,9 @@ import com.dmoffat.website.rest.impl.SuccessApiResponse;
 import com.dmoffat.website.service.AuthenticationService;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.WebUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -16,14 +19,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.SmartValidator;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.beans.PropertyDescriptor;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * @author dan
@@ -37,11 +48,14 @@ public class AdminController {
     private AuthenticationService authenticationService;
     private BlogService blogService;
 
+    private SmartValidator validator;
+
     @Autowired
-    public AdminController(MessageSource messageSource, AuthenticationService authenticationService, BlogService blogService) {
+    public AdminController(MessageSource messageSource, AuthenticationService authenticationService, BlogService blogService, SmartValidator validator) {
         this.messageSource = messageSource;
         this.authenticationService = authenticationService;
         this.blogService = blogService;
+        this.validator = validator;
     }
 
     private boolean isAuthenticated(HttpServletRequest request) {
@@ -68,6 +82,70 @@ public class AdminController {
         blogService.save(newPost);
 
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", newPost).build(), HttpStatus.OK);
+    }
+
+    public static String[] getNullPropertiesString(Object source) {
+        Set<String> emptyNames = getNullProperties(source);
+        String[] result = new String[emptyNames.size()];
+
+        return emptyNames.toArray(result);
+    }
+
+    /**
+     * Gets the properties which have null values from the given object.
+     *
+     * @param - source object
+     *
+     * @return - Set<String> of property names.
+     */
+    public static Set<String> getNullProperties(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<String>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null)
+                emptyNames.add(pd.getName());
+        }
+        return emptyNames;
+    }
+
+    @PostMapping("/management/post/{id}/edit")
+    public ResponseEntity<ApiResponse> handleEditPost(@RequestBody Post editedPost, @PathVariable(name = "id") Long postId) {
+
+        // This allows partial updates, without losing validation
+        Post post = blogService.findPostById(postId);
+
+        if(post == null) {
+            return new ResponseEntity<>(new ErrorApiResponse("111", "A post with that ID doesn't exist."), HttpStatus.BAD_REQUEST);
+        }
+
+        String[] propertiesToIgnore = getNullProperties(editedPost).toArray(new String[10]);
+
+        BeanUtils.copyProperties(editedPost, post, propertiesToIgnore);
+
+        BindingResult result = new BeanPropertyBindingResult(post, "post");
+        this.validator.validate(post, result);
+
+        if(result.hasErrors()) {
+            return validationError(result);
+        }
+
+        // Finally, update the post
+        blogService.update(post);
+
+        return new ResponseEntity<>(new SuccessApiResponse.Builder().build(), HttpStatus.OK);
+    }
+
+    @PostMapping("/management/post/{id}/delete")
+    public ResponseEntity<ApiResponse> handleDeletePost(@PathVariable(name = "id") Long postId) {
+
+        if(blogService.archive(postId)) {
+            return new ResponseEntity<>(new SuccessApiResponse.Builder().build(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<ApiResponse>(new ErrorApiResponse("100", "A post with that ID doesn't exist"), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/management/auth")

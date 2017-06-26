@@ -1,10 +1,10 @@
 package com.dmoffat.website.controller.interceptor;
 
 import com.dmoffat.website.service.AuthenticationService;
-import com.dmoffat.website.util.StringUtils;
 import com.dmoffat.website.util.WebUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.jsoup.helper.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class AdminAuthenticationInterceptor extends HandlerInterceptorAdapter {
         // API consumer
         String authorisationHeader = request.getHeader("Authorization");
 
-        if(!StringUtils.isBlank(authorisationHeader)) {
+        if(!StringUtil.isBlank(authorisationHeader)) {
             if(authenticationService.isValidToken(authorisationHeader)) {
                 logger.info("User authenticated with header.");
                 return true;

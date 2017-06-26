@@ -1,6 +1,7 @@
 package com.dmoffat.website.rest.impl;
 
 import com.dmoffat.website.rest.ApiResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 /**
  * @author dan
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SuccessApiResponse implements ApiResponse {
     private Map<String, Object> payload;
     private boolean success;

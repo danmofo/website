@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
+ * todo: rewrite HQL statements
+ *
  * @author dan
  */
 @Repository("postDao")

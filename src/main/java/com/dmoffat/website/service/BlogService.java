@@ -45,4 +45,6 @@ public interface BlogService {
     List<Post> findPostByDate(LocalDateTime date);
     List<Post> findPostBetween(LocalDateTime start, LocalDateTime end);
     List<Post> findRecentPosts();
+
+    boolean archive(Long postId);
 }

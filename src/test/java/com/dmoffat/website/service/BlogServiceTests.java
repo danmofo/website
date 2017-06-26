@@ -202,4 +202,18 @@ public class BlogServiceTests {
 		assertNotNull(blogService.findPostById(post.getId()));
 		assertNotNull(blogService.findRecentPosts());
 	}
+
+	@Test
+	public void editPost() throws Exception {
+		post.setAuthor("Edited!");
+		blogService.update(post);
+
+		assertTrue(blogService.findPostByAuthor("Edited!") != null);
+	}
+
+	@Test
+	public void archivePost() throws Exception {
+		blogService.archive(post.getId());
+		assertTrue(post.isArchived());
+	}
 }

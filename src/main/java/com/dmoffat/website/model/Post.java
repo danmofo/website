@@ -47,7 +47,18 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
     private List<Comment> comments;
 
+    private boolean archived = false;
+
     public Post() {
+    }
+
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 
     public String getHtmlContent() {
@@ -131,10 +142,8 @@ public class Post extends BaseEntity {
         setPublished(builder.published);
         setPosted(builder.posted);
         setTags(builder.tags);
-        setId(builder.id);
-        setCreated(builder.created);
-        setUpdated(builder.updated);
         setComments(builder.comments);
+        setArchived(builder.archived);
     }
 
     public void addTag(Tag tag) {
@@ -175,9 +184,23 @@ public class Post extends BaseEntity {
         private LocalDateTime posted;
         private Set<Tag> tags;
         private List<Comment> comments;
+        private boolean archived;
 
         public Builder() {
             published = false;
+        }
+
+        public Builder(Post copy) {
+            this.title = copy.title;
+            this.permalink = copy.permalink;
+            this.author = copy.author;
+            this.content = copy.content;
+            this.htmlContent = copy.htmlContent;
+            this.published = copy.published;
+            this.posted = copy.posted;
+            this.tags = copy.tags;
+            this.comments = copy.comments;
+            this.archived = copy.archived;
         }
 
         public Builder id(Long val) {
@@ -241,15 +264,19 @@ public class Post extends BaseEntity {
             return this;
         }
 
+        public Builder archived(boolean val) {
+            archived = val;
+            return this;
+        }
+
         public Post build() {
             return new Post(this);
         }
     }
 
-
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Post{");
+        final StringBuffer sb = new StringBuffer("Post{");
         sb.append("title='").append(title).append('\'');
         sb.append(", permalink='").append(permalink).append('\'');
         sb.append(", author='").append(author).append('\'');
@@ -257,7 +284,9 @@ public class Post extends BaseEntity {
         sb.append(", htmlContent='").append(htmlContent).append('\'');
         sb.append(", published=").append(published);
         sb.append(", posted=").append(posted);
+        sb.append(", tags=").append(tags);
         sb.append(", comments=").append(comments);
+        sb.append(", archived=").append(archived);
         sb.append('}');
         return sb.toString();
     }

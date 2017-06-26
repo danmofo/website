@@ -208,4 +208,19 @@ public class BlogServiceImpl implements BlogService {
     public List<Post> findRecentPosts() {
         return findPostBetween(timeProvider.now().minusMonths(1), timeProvider.now());
     }
+
+    @Override
+    public boolean archive(Long postId) {
+        Objects.requireNonNull(postId, "postId cannot be null.");
+
+        Post post = findPostById(postId);
+
+        if(post == null) {
+            return false;
+        }
+
+        post.setArchived(true);
+        postDao.update(post);
+        return true;
+    }
 }

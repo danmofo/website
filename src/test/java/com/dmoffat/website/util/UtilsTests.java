@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
@@ -52,15 +51,5 @@ public class UtilsTests {
         } catch (IllegalArgumentException exception) {
             System.out.println(exception.getMessage());
         }
-    }
-
-    @Test
-    public void isBlank() throws Exception {
-        assertTrue(StringUtils.isBlank(""));
-        assertTrue(StringUtils.isBlank(null));
-        assertTrue(StringUtils.isBlank(" "));
-        assertTrue(StringUtils.isBlank("                       "));
-        assertTrue(StringUtils.isBlank("\t"));
-        assertFalse(StringUtils.isBlank("Hello!"));
     }
 }

@@ -1,5 +1,7 @@
 package com.dmoffat.website.util;
 
+import org.jsoup.helper.StringUtil;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -11,12 +13,12 @@ public class WebUtils {
     public static Cookie findCookieByName(HttpServletRequest request, String name) {
         Objects.requireNonNull(request, "Request cannot be null.");
 
-        if(StringUtils.isBlank(name))
+        if(StringUtil.isBlank(name))
             throw new IllegalArgumentException("Cookie name cannot be null / empty.");
 
         Cookie[] cookies = request.getCookies();
 
-        if(cookies == null || cookies.length == 0) {
+        if(cookies == null) {
             return null;
         }
 
