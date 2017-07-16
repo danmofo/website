@@ -86,6 +86,23 @@ public class AdminController {
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", newPost).build(), HttpStatus.OK);
     }
 
+    @GetMapping("/management/post/{id}/")
+    public ResponseEntity<ApiResponse> postDetail(@PathVariable("id") Long id) {
+        Post post = blogService.findPostById(id);
+
+        System.out.println("Version 1: " + post.version(1));
+        System.out.println("Version 2: " + post.version(2));
+        System.out.println("Version 3: " + post.version(3));
+
+        try {
+            System.out.println(post.version(33));
+        } catch (Exception ex) {
+
+        }
+
+        return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", post).build(), HttpStatus.OK);
+    }
+
     @PostMapping("/management/post/{id}/edit")
     public ResponseEntity<ApiResponse> handleEditPost(@RequestBody Post editedPost, @PathVariable(name = "id") Long postId) {
 
@@ -94,6 +111,9 @@ public class AdminController {
         if(post == null) {
             return new ResponseEntity<>(new ErrorApiResponse("111", "A post with that ID doesn't exist."), HttpStatus.BAD_REQUEST);
         }
+
+        // Keep hold of the original content before it gets overwritten
+        String originalContent = post.getContent();
 
         // Allow partial updating
         BeanUtils.copyPropertiesIgnoringNull(editedPost, post);
@@ -105,7 +125,7 @@ public class AdminController {
         }
 
         // Finally, update the post
-        blogService.update(post);
+        blogService.update(post, originalContent);
 
         return new ResponseEntity<>(new SuccessApiResponse.Builder().build(), HttpStatus.OK);
     }

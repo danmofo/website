@@ -16,6 +16,7 @@ public interface BlogService {
     /** Post administration **/
     void save(Post post);
     Post update(Post post);
+    Post update(Post post, String originalContent);
     void publish(Post post);
     void hide(Post post);
 

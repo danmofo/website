@@ -38,8 +38,7 @@ public class UtilsTests {
 
         BeanUtils.copyPropertiesIgnoringNull(tag, tag2);
 
-        assertEquals(tag2.equals());
-        assertNotNull()
+        fail("finish");
     }
 
     @Test

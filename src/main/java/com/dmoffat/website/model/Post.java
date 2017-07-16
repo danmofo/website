@@ -1,13 +1,11 @@
 package com.dmoffat.website.model;
 
+import name.fraser.neil.plaintext.diff_match_patch;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by danielmoffat on 15/04/2017.
@@ -47,17 +45,75 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
     private List<Comment> comments;
 
-    private boolean archived = false;
+    private Boolean archived = false;
+
+    @OneToMany(mappedBy = "post")
+    private List<Patch> diffs = new ArrayList<>();
+
+    @Column(name = "original_content")
+    private String originalContent;
+
+    public int revisionCount() {
+        return diffs == null ? 0 : diffs.size();
+    }
+
+    public String version() {
+        return version(1);
+    }
+
+    public String version(int version) {
+        if(version == 1) {
+            return originalContent;
+        }
+
+        if(version > diffs.size() + 1) {
+            throw new IllegalArgumentException("Wanted version:" + version + ", but there are only " + (diffs.size() + 1) + " versions available.");
+        }
+
+        // Apply the diffs until we reach the required revision
+        diff_match_patch diffMatchPatch = new diff_match_patch();
+
+        String result = getOriginalContent();
+
+        for (int i = 0; i < diffs.size(); i++) {
+            LinkedList<diff_match_patch.Patch> p = (LinkedList)diffMatchPatch.patch_fromText(diffs.get(i).getText());
+            result = (String)diffMatchPatch.patch_apply(p, result)[0];
+            if(i + 2 == version) {
+                return result;
+            }
+        }
+
+        return result;
+    }
+
+    public String getOriginalContent() {
+        return originalContent;
+    }
+
+    public void setOriginalContent(String originalContent) {
+        this.originalContent = originalContent;
+    }
 
     public Post() {
     }
 
-
-    public boolean isArchived() {
+    public Boolean getArchived() {
         return archived;
     }
 
-    public void setArchived(boolean archived) {
+    public List<Patch> getDiffs() {
+        return diffs;
+    }
+
+    public void setDiffs(List<Patch> diffs) {
+        this.diffs = diffs;
+    }
+
+    public Boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
         this.archived = archived;
     }
 
@@ -144,6 +200,7 @@ public class Post extends BaseEntity {
         setTags(builder.tags);
         setComments(builder.comments);
         setArchived(builder.archived);
+        setDiffs(builder.diffs);
     }
 
     public void addTag(Tag tag) {
@@ -179,12 +236,14 @@ public class Post extends BaseEntity {
         private String permalink;
         private String author;
         private String content;
+        private String originalContent;
         private String htmlContent;
         private boolean published;
         private LocalDateTime posted;
         private Set<Tag> tags;
         private List<Comment> comments;
-        private boolean archived;
+        private Boolean archived;
+        private List<Patch> diffs;
 
         public Builder() {
             published = false;
@@ -195,12 +254,14 @@ public class Post extends BaseEntity {
             this.permalink = copy.permalink;
             this.author = copy.author;
             this.content = copy.content;
+            this.content = copy.originalContent;
             this.htmlContent = copy.htmlContent;
             this.published = copy.published;
             this.posted = copy.posted;
             this.tags = copy.tags;
             this.comments = copy.comments;
             this.archived = copy.archived;
+            this.diffs = copy.diffs;
         }
 
         public Builder id(Long val) {
@@ -235,6 +296,16 @@ public class Post extends BaseEntity {
 
         public Builder content(String val) {
             content = val;
+            return this;
+        }
+
+        public Builder originalContent(String val) {
+            originalContent = val;
+            return this;
+        }
+
+        public Builder diffs(List<Patch> val) {
+            diffs = val;
             return this;
         }
 

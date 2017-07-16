@@ -1,20 +1,21 @@
 package com.dmoffat.website.service.impl;
 
-import com.dmoffat.website.dao.CommentDao;
-import com.dmoffat.website.dao.PostDao;
-import com.dmoffat.website.dao.TagDao;
+import com.dmoffat.website.dao.*;
 import com.dmoffat.website.model.Comment;
+import com.dmoffat.website.model.Patch;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.time.TimeProvider;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
+import name.fraser.neil.plaintext.diff_match_patch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,16 +29,18 @@ public class BlogServiceImpl implements BlogService {
     private CommentDao commentDao;
     private TagDao tagDao;
     private TimeProvider timeProvider;
+    private PatchDao patchDao;
 
     private Parser markdownParser;
     private HtmlRenderer markdownRenderer;
 
     @Autowired
-    public BlogServiceImpl(PostDao postDao, CommentDao commentDao, TagDao tagDao, TimeProvider timeProvider) {
+    public BlogServiceImpl(PostDao postDao, CommentDao commentDao, TagDao tagDao, TimeProvider timeProvider, PatchDao patchDao) {
         this.postDao = postDao;
         this.commentDao = commentDao;
         this.tagDao = tagDao;
         this.timeProvider = timeProvider;
+        this.patchDao = patchDao;
         this.markdownParser = Parser.builder().build();
         this.markdownRenderer = HtmlRenderer.builder().build();
     }
@@ -63,6 +66,7 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(post, "post cannot be null.");
 
         post.setHtmlContent(markdownRenderer.render(markdownParser.parse(post.getContent())));
+        post.setOriginalContent(post.getContent());
 
         postDao.create(post);
     }
@@ -94,6 +98,25 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(post, "post cannot be null.");
 
         return postDao.update(post);
+    }
+
+    @Override
+    public Post update(Post post, String originalContent) {
+        // Determine if there are differences
+        diff_match_patch diffMatchPatch = new diff_match_patch();
+        LinkedList<diff_match_patch.Diff> diffs = diffMatchPatch.diff_main(originalContent, post.getContent());
+
+        diff_match_patch.Diff first = diffs.get(0);
+        if(!first.operation.equals(diff_match_patch.Operation.EQUAL)) {
+            // Create a patch, containing the differences between the current version and the new version
+            Patch patch = new Patch();
+            patch.setPost(post);
+            patch.setText(diffMatchPatch.patch_toText(diffMatchPatch.patch_make(diffs)));
+            patch.setModified(timeProvider.now());
+            patchDao.create(patch);
+        }
+
+        return update(post);
     }
 
     @Override

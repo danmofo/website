@@ -6,6 +6,12 @@
 	<groupId>com.dmoffat</groupId>
 	<artifactId>website</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<repositories>
+		<repository>
+			<id>1</id>
+			<name>Adobe</name>
+			<url>https://repo.adobe.com/nexus/content/repositories/public/</url>
+		</repository></repositories>
 	<packaging>jar</packaging>
 
 	<name>blog</name>
@@ -96,6 +102,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>diff_match_patch</groupId>
+			<artifactId>diff_match_patch</artifactId>
+			<version>current</version>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<build>
