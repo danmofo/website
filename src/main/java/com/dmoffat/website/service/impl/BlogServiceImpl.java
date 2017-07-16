@@ -44,7 +44,18 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Post> findAllPosts() {
+        return postDao.findAllPosts(false);
+    }
+
+    @Override
+    public List<Post> findAllPostsWithTags() {
         return postDao.findAllPosts(true);
+    }
+
+    @Override
+    public List<Post> findAllPostsWithTagsAndComments() {
+        // todo:
+        return null;
     }
 
     @Override

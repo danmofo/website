@@ -8,10 +8,8 @@ import com.dmoffat.website.rest.impl.ErrorApiResponse;
 import com.dmoffat.website.rest.impl.SuccessApiResponse;
 import com.dmoffat.website.service.AuthenticationService;
 import com.dmoffat.website.service.BlogService;
+import com.dmoffat.website.util.BeanUtils;
 import com.dmoffat.website.util.WebUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -31,10 +29,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.beans.PropertyDescriptor;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * @author dan
@@ -72,6 +68,12 @@ public class AdminController {
         return new ResponseEntity<>(ErrorApiResponse.fromBindingResult(result), HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/management/post/list")
+    public ResponseEntity<ApiResponse> listPosts() {
+        List<Post> posts = blogService.findAllPostsWithTags();
+        return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("posts", posts).build(), HttpStatus.OK);
+    }
+
     @PostMapping("/management/post/new")
     public ResponseEntity<ApiResponse> handleNewPost(@RequestBody @Valid Post newPost, BindingResult result) {
 
@@ -84,49 +86,19 @@ public class AdminController {
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", newPost).build(), HttpStatus.OK);
     }
 
-    public static String[] getNullPropertiesString(Object source) {
-        Set<String> emptyNames = getNullProperties(source);
-        String[] result = new String[emptyNames.size()];
-
-        return emptyNames.toArray(result);
-    }
-
-    /**
-     * Gets the properties which have null values from the given object.
-     *
-     * @param - source object
-     *
-     * @return - Set<String> of property names.
-     */
-    public static Set<String> getNullProperties(Object source) {
-        final BeanWrapper src = new BeanWrapperImpl(source);
-        PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-        Set<String> emptyNames = new HashSet<String>();
-        for (PropertyDescriptor pd : pds) {
-            Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null)
-                emptyNames.add(pd.getName());
-        }
-        return emptyNames;
-    }
-
     @PostMapping("/management/post/{id}/edit")
     public ResponseEntity<ApiResponse> handleEditPost(@RequestBody Post editedPost, @PathVariable(name = "id") Long postId) {
 
-        // This allows partial updates, without losing validation
         Post post = blogService.findPostById(postId);
 
         if(post == null) {
             return new ResponseEntity<>(new ErrorApiResponse("111", "A post with that ID doesn't exist."), HttpStatus.BAD_REQUEST);
         }
 
-        String[] propertiesToIgnore = getNullProperties(editedPost).toArray(new String[10]);
+        // Allow partial updating
+        BeanUtils.copyPropertiesIgnoringNull(editedPost, post);
 
-        BeanUtils.copyProperties(editedPost, post, propertiesToIgnore);
-
-        BindingResult result = new BeanPropertyBindingResult(post, "post");
-        this.validator.validate(post, result);
+        BindingResult result = validate(post);
 
         if(result.hasErrors()) {
             return validationError(result);
@@ -201,5 +173,11 @@ public class AdminController {
     @GetMapping("/management/")
     public String home() {
         return "/admin/home";
+    }
+
+    private BindingResult validate(Post post) {
+        BindingResult result = new BeanPropertyBindingResult(post, "post");
+        this.validator.validate(post, result);
+        return result;
     }
 }

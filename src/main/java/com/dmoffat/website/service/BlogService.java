@@ -32,6 +32,8 @@ public interface BlogService {
 
     /** Find all queries **/
     List<Post> findAllPosts();
+    List<Post> findAllPostsWithTags();
+    List<Post> findAllPostsWithTagsAndComments();
     List<Tag> findAllTags();
     List<Comment> findAllComments();
 

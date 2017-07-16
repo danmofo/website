@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +27,7 @@ public class PostDaoImpl extends PostDao {
         CriteriaQuery<Post> criteriaQuery = getEntityManager().getCriteriaBuilder().createQuery(Post.class);
         Root<Post> root = criteriaQuery.from(Post.class);
         criteriaQuery.select(root);
-        root.fetch("tags");
+        root.join("tags", JoinType.LEFT);
 
         TypedQuery<Post> query = getEntityManager().createQuery(criteriaQuery);
 
