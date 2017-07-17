@@ -387,3 +387,19 @@ insert into tag (value) values ('cohesive');
 insert into tag (value) values ('Optimized');
 
 insert into user (id, username, password) values (1, "danmofo", "$2a$10$e3Cz5/NhVGTM4zPRojW5Y.1fxPVAWEnlojyDD.mLNanVlL90qKVse");
+
+insert into post (id, title, author, content, original_content, html_content, updated, posted_on, published, created, permalink, archived) values ('1', 'My first post', 'Daniel Moffat', 'The fourth version', '# Title \n Some content', '<h1>Title</h1>\n<p>Some content</p>\n', '2017-07-17 21:00:12', NULL, '0', '2017-07-17 20:58:36', 'my-first-post1500321515', '0');
+
+insert into post_comment (id, post_id, name, content) values (1, 1, 'Anonymous', 'This sucks bro.');
+insert into post_comment (id, post_id, name, content) values (2, 1, 'Anonymous', 'Dont worry I think its ok');
+insert into post_comment (id, post_id, name, content) values (3, 1, 'Anonymous', 'Nah it really sucks.');
+insert into post_comment (id, post_id, name, content) values (4, 1, 'Anonymous', 'Have you seen Peep Show?');
+
+insert into post_tag (tag_id, post_id) values (1, 1);
+insert into post_tag (tag_id, post_id) values (2, 1);
+insert into post_tag (tag_id, post_id) values (3, 1);
+insert into post_tag (tag_id, post_id) values (4, 1);
+insert into post_tag (tag_id, post_id) values (5, 1);
+
+insert into post_content_revision (id, post_id, patch, modified) values ('1', '1', '@@ -1,22 +1,10 @@\n-# Title %0A Som\n+V\n e\n- c\n+rsi\n on\n-tent\n+ 2!\n', '2017-07-17 20:59:59');
+insert into post_content_revision (id, post_id, patch, modified) values ('2', '1', '@@ -1,14 +1,18 @@\n-V\n+The fourth v\n ersion\n- three!\n', '2017-07-17 21:00:12');

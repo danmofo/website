@@ -90,14 +90,8 @@ public class AdminController {
     public ResponseEntity<ApiResponse> postDetail(@PathVariable("id") Long id) {
         Post post = blogService.findPostById(id);
 
-        System.out.println("Version 1: " + post.version(1));
-        System.out.println("Version 2: " + post.version(2));
-        System.out.println("Version 3: " + post.version(3));
-
-        try {
-            System.out.println(post.version(33));
-        } catch (Exception ex) {
-
+        if(post == null) {
+            return new ResponseEntity<>(new ErrorApiResponse("111", "A post with that ID doesn't exist."), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("post", post).build(), HttpStatus.OK);
@@ -137,7 +131,7 @@ public class AdminController {
             return new ResponseEntity<>(new SuccessApiResponse.Builder().build(), HttpStatus.OK);
         }
 
-        return new ResponseEntity<ApiResponse>(new ErrorApiResponse("100", "A post with that ID doesn't exist"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorApiResponse("100", "A post with that ID doesn't exist"), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/management/auth")

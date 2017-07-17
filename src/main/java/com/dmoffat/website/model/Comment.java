@@ -1,5 +1,7 @@
 package com.dmoffat.website.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 /**
@@ -8,6 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "post_comment")
+@JsonIgnoreProperties(value = {"id"})
 public class Comment extends BaseEntity {
     private String content;
 

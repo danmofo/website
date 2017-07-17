@@ -1,12 +1,16 @@
 package com.dmoffat.website.model;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by danielmoffat on 15/04/2017.
  */
 @Entity
 @Table(name = "tag")
+@JsonIgnoreProperties(value = {"created", "updated", "id"})
 public class Tag extends BaseEntity {
     private String value;
 

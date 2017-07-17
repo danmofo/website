@@ -27,6 +27,8 @@ public class BaseEntity {
 
     @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
     protected LocalDateTime created;
+
+    @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
     protected LocalDateTime updated;
 
     public LocalDateTime getCreated() {
