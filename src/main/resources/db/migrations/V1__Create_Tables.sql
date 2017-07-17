@@ -1,9 +1,17 @@
 CREATE SCHEMA IF NOT EXISTS `dmoffat.com`;
 
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.`author` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `author_id` INT(11) NULL DEFAULT NULL,
   `title` VARCHAR(255) NULL DEFAULT NULL,
-  `author` VARCHAR(255) NULL DEFAULT NULL,
   `content` TEXT NULL DEFAULT NULL,
   `original_content` TEXT NULL DEFAULT NULL,
   `html_content` TEXT NULL DEFAULT NULL,
@@ -14,7 +22,12 @@ CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post` (
   `permalink` VARCHAR(255) NOT NULL,
   `archived` TINYINT(1) NULL DEFAULT 1,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `permalink_UNIQUE` (`permalink` ASC))
+  UNIQUE INDEX `permalink_UNIQUE` (`permalink` ASC),
+  CONSTRAINT `fk_author`
+      FOREIGN KEY (`author_id`)
+      REFERENCES `dmoffat.com`.`author` (`id`)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -388,7 +401,9 @@ insert into tag (value) values ('Optimized');
 
 insert into user (id, username, password) values (1, "danmofo", "$2a$10$e3Cz5/NhVGTM4zPRojW5Y.1fxPVAWEnlojyDD.mLNanVlL90qKVse");
 
-insert into post (id, title, author, content, original_content, html_content, updated, posted_on, published, created, permalink, archived) values ('1', 'My first post', 'Daniel Moffat', 'The fourth version', '# Title \n Some content', '<h1>Title</h1>\n<p>Some content</p>\n', '2017-07-17 21:00:12', NULL, '0', '2017-07-17 20:58:36', 'my-first-post1500321515', '0');
+insert into author (id, name) values (1, "Daniel Moffat");
+
+insert into post (id, title, author_id, content, original_content, html_content, updated, posted_on, published, created, permalink, archived) values ('1', 'My first post', 1, 'The fourth version', '# Title \n Some content', '<h1>Title</h1>\n<p>Some content</p>\n', '2017-07-17 21:00:12', NULL, '0', '2017-07-17 20:58:36', 'my-first-post1500321515', '0');
 
 insert into post_comment (id, post_id, name, content) values (1, 1, 'Anonymous', 'This sucks bro.');
 insert into post_comment (id, post_id, name, content) values (2, 1, 'Anonymous', 'Dont worry I think its ok');

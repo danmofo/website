@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "post_comment")
-@JsonIgnoreProperties(value = {"id"})
+@JsonIgnoreProperties(value = {"id", "post"})
 public class Comment extends BaseEntity {
     private String content;
 

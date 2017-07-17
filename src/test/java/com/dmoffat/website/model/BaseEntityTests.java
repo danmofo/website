@@ -34,7 +34,8 @@ public class BaseEntityTests {
 
     @Before
     public void setUp() throws Exception {
-        post = new Post.Builder().title("test").author("Daniel").content("Content").permalink("content").build();
+        Author author = new Author("Daniel Moffat");
+        post = new Post.Builder().title("test").author(author).content("Content").permalink("content").build();
 
         postDao.create(post);
     }
@@ -46,7 +47,7 @@ public class BaseEntityTests {
 
     @Test
     public void testUpdatedDateIsSetOnUpdate() throws Exception {
-        post.setAuthor("John");
+        post.setAuthor(new Author("Daniel Moffat"));
         postDao.update(post);
 
         // Force an update, by manually calling flush().

@@ -21,8 +21,8 @@ public class Post extends BaseEntity {
     @NotEmpty
     private String permalink;
 
-    @NotEmpty
-    private String author;
+    @OneToOne(fetch = FetchType.EAGER)
+    private Author author;
 
     @NotEmpty
     private String content;
@@ -157,11 +157,11 @@ public class Post extends BaseEntity {
         this.posted = posted;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
@@ -234,7 +234,7 @@ public class Post extends BaseEntity {
         private String title;
         private LocalDateTime updated;
         private String permalink;
-        private String author;
+        private Author author;
         private String content;
         private String originalContent;
         private String htmlContent;
@@ -289,7 +289,7 @@ public class Post extends BaseEntity {
             return this;
         }
 
-        public Builder author(String val) {
+        public Builder author(Author val) {
             author = val;
             return this;
         }

@@ -1,6 +1,7 @@
 package com.dmoffat.website.service;
 
 import com.dmoffat.website.BlogApplication;
+import com.dmoffat.website.model.Author;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
@@ -53,7 +54,7 @@ public class BlogServiceTests {
 	@Before
 	public void setUp() throws Exception {
 		this.post = new Post.Builder()
-				.author("Dan")
+				.author(new Author("Daniel Moffat"))
 				.content("My test post")
 				.title("My title")
 				.permalink("post")
@@ -62,7 +63,7 @@ public class BlogServiceTests {
 		blogService.save(post);
 
 		this.publishedPost = new Post.Builder()
-				.author("Dan")
+				.author(new Author("Daniel Moffat"))
 				.content("My test post")
 				.title("My title")
 				.published(true)
@@ -72,7 +73,7 @@ public class BlogServiceTests {
 		blogService.save(publishedPost);
 
 		this.postWithTags = new Post.Builder()
-				.author("Danz")
+				.author(new Author("Daniel Moffat"))
 				.content("My test post 2")
 				.title("My title2")
 				.permalink("post-with-tags")
@@ -91,7 +92,7 @@ public class BlogServiceTests {
 		this.basicComment = new Comment.Builder().name("Daniel").post(post).content("This is a great post.").build();
 
 		this.postWithComment = new Post.Builder()
-				.author("Dan")
+				.author(new Author("Daniel Moffat"))
 				.content("My test post")
 				.title("My title")
 				.permalink("foobar").build();
@@ -107,7 +108,7 @@ public class BlogServiceTests {
 
 		// Id is only null when it hasn't been persisted to the DB
 		Post post2 = new Post.Builder()
-					.author("D")
+					.author(new Author("Daniel Moffat"))
 					.content("asdf")
 					.title("asddd")
 					.permalink("asdf")
@@ -121,7 +122,7 @@ public class BlogServiceTests {
 
 	@Test
 	public void updatePost() throws Exception {
-		post.setAuthor("Chrissy");
+		post.setAuthor(new Author("Chrissy"));
 		blogService.update(post);
 
 		assertNotNull(blogService.findPostByAuthor("Chrissy"));
@@ -196,7 +197,7 @@ public class BlogServiceTests {
 
 	@Test
 	public void findPost() throws Exception {
-		assertNotNull(blogService.findPostByAuthor(post.getAuthor()));
+		assertNotNull(blogService.findPostByAuthor(post.getAuthor().getName()));
 		assertNotNull(blogService.findPostBetween(post.getCreated().minusDays(1), post.getCreated().plusDays(1)));
 		assertNotNull(blogService.findPostByDate(post.getCreated()));
 		assertNotNull(blogService.findPostById(post.getId()));
@@ -205,7 +206,7 @@ public class BlogServiceTests {
 
 	@Test
 	public void editPost() throws Exception {
-		post.setAuthor("Edited!");
+		post.setAuthor(new Author("Edited!"));
 		blogService.update(post);
 
 		assertTrue(blogService.findPostByAuthor("Edited!") != null);
