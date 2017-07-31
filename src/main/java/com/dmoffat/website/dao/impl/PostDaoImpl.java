@@ -37,7 +37,7 @@ public class PostDaoImpl extends PostDao {
         Root<Post> root = criteriaQuery.from(Post.class);
         criteriaQuery.select(root).distinct(true);
 
-        // Always fetch the author
+        // Always eagerly fetch the author
         root.fetch("author", JoinType.INNER);
 
         if(fetchTags) {
@@ -57,14 +57,13 @@ public class PostDaoImpl extends PostDao {
         return query.getResultList();
     }
 
-    // todo: use typed queries to allow conditional retrieval of related entities
     @Override
     public List<Post> findAllPostsByAuthor(String authorName, boolean fetchTags) {
         CriteriaBuilder criteriaBuilder = criteriaBuilder();
         CriteriaQuery<Post> criteriaQuery = criteriaQuery();
         Root<Post> root = criteriaQuery.from(Post.class);
 
-        root.join("author");
+        root.fetch("author");
 
         ParameterExpression<String> expression = criteriaBuilder.parameter(String.class, "authorName");
         criteriaQuery.where(criteriaBuilder.equal(root.get("author").get("name"), expression));
@@ -77,17 +76,28 @@ public class PostDaoImpl extends PostDao {
 
     @Override
     public List<Post> findAllPostsByDate(LocalDateTime date, boolean fetchTags) {
-        TypedQuery<Post> query = getEntityManager().createQuery("from Post p inner join fetch p.tags where p.posted = :date", Post.class);
-        query.setParameter("date", date);
-
-        return query.getResultList();
+        return findAllPostsByDateBetween(date, date, fetchTags);
     }
 
     @Override
     public List<Post> findAllPostsByDateBetween(LocalDateTime start, LocalDateTime end, boolean fetchTags) {
-        TypedQuery<Post> query = getEntityManager().createQuery("from Post p inner join fetch p.tags where p.posted between :start and :end", Post.class);
-        query.setParameter("start", start);
-        query.setParameter("end", end);
+        CriteriaQuery<Post> criteriaQuery = criteriaQuery();
+        CriteriaBuilder criteriaBuilder = criteriaBuilder();
+        Root<Post> root = criteriaQuery.from(Post.class);
+        criteriaQuery.select(root).distinct(true);
+        root.fetch("author");
+
+        ParameterExpression<LocalDateTime> startDate = criteriaBuilder.parameter(LocalDateTime.class, "startDate");
+        ParameterExpression<LocalDateTime> endDate = criteriaBuilder.parameter(LocalDateTime.class, "endDate");
+        criteriaQuery.where(criteriaBuilder.between(root.get("created"), startDate, endDate));
+
+        if(fetchTags) {
+            root.fetch("tags", JoinType.LEFT);
+        }
+
+        TypedQuery<Post> query = getEntityManager().createQuery(criteriaQuery);
+        query.setParameter("startDate", start);
+        query.setParameter("endDate", end);
 
         return query.getResultList();
     }

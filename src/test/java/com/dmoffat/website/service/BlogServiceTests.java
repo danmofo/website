@@ -1,5 +1,6 @@
 package com.dmoffat.website.service;
 
+import com.dmoffat.website.dao.PostDao;
 import com.dmoffat.website.model.Author;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
@@ -11,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.*;
 
 /**
@@ -31,14 +34,13 @@ import static org.junit.Assert.*;
  * todo: add profile for testing with a different config to production
  * todo: test blog post with markdown content...
  * todo: test applying the patches to content to assert that the patching library actually works as intended.
+ * todo: change time to be static so recent posts can be tested correctly.
  */
 public class BlogServiceTests extends IntegrationTest {
 
-	@PersistenceContext
-	private EntityManager entityManager;
-
-    @Autowired
-    private BlogService blogService;
+	@PersistenceContext private EntityManager entityManager;
+    @Autowired private BlogService blogService;
+    @Autowired private PostDao postDao;
 
     private Post post;
     private Post publishedPost;
@@ -46,6 +48,10 @@ public class BlogServiceTests extends IntegrationTest {
     private Post postWithComment;
     private Post postWithRevision;
     private Post postWithMultipleRevisions;
+    private Post postWithFakeCreatedDate;
+    private Post postWithAuthor;
+
+    private LocalDateTime fakeCreatedDate = LocalDateTime.of(2017, 1, 1, 0, 0);
 
     private Tag tag;
     private Tag tag2;
@@ -106,7 +112,7 @@ public class BlogServiceTests extends IntegrationTest {
 		this.postWithRevision = new Post.Builder()
 				.author(new Author("Daniel Moffat"))
 				.content("Revision one")
-				.title("This is a post with revisions")
+				.title("Post with no revisions")
 				.permalink("post-with-revisions")
 				.build();
 
@@ -117,7 +123,7 @@ public class BlogServiceTests extends IntegrationTest {
 		this.postWithMultipleRevisions = new Post.Builder()
 				.author(new Author("Daniel Moffat"))
 				.content(originalContent)
-				.title("This is a post with revisions")
+				.title("Post with multiple revisions")
 				.permalink("post-with-revisions-23455")
 				.build();
 
@@ -127,6 +133,28 @@ public class BlogServiceTests extends IntegrationTest {
 		blogService.update(postWithMultipleRevisions, originalContent);
 		this.postWithMultipleRevisions.setContent("Revision three");
 		blogService.update(postWithMultipleRevisions, "Revision two");
+
+		this.postWithFakeCreatedDate = new Post.Builder()
+				.author(new Author("Daniel Moffat"))
+				.title("Ze title.")
+				.content("Some content...")
+				.permalink("asd-asda-ffsadas")
+				.created(fakeCreatedDate)
+				.build();
+
+		blogService.save(postWithFakeCreatedDate);
+		System.out.println("------------------");
+		System.out.println(postWithFakeCreatedDate.getCreated());
+		System.out.println("------------------");
+
+		this.postWithAuthor = new Post.Builder()
+				.author(new Author("Mr Once Only"))
+				.title("Another original title.")
+				.content("Some content...")
+				.permalink("perma1234")
+				.build();
+
+		blogService.save(postWithAuthor);
 	}
 
 	@Test
@@ -262,20 +290,43 @@ public class BlogServiceTests extends IntegrationTest {
 		assertNotNull(blogService.findTagByValue(tag.getValue()));
 	}
 
+	// todo: finish
 	@Test
-	public void findPost() throws Exception {
-		assertNotNull(blogService.findPostByAuthor(post.getAuthor().getName()));
-		assertNotNull(blogService.findPostBetween(post.getCreated().minusDays(1), post.getCreated().plusDays(1)));
-		assertNotNull(blogService.findPostByDate(post.getCreated()));
-		assertNotNull(blogService.findPostById(post.getId()));
+	public void findRecentPosts() throws Exception {
 		assertNotNull(blogService.findRecentPosts());
+	}
+
+	@Test
+	public void findPostByAuthor() throws Exception {
+		List<Post> postByAuthor = blogService.findPostByAuthor("Mr Once Only");
+		assertThat(postByAuthor, hasSize(1));
+	}
+
+	@Test
+	public void findPostBetween() throws Exception {
+		LocalDateTime start = fakeCreatedDate.minusDays(1);
+		LocalDateTime end = fakeCreatedDate.plusDays(1);
+		List<Post> posts = blogService.findPostBetween(start, end);
+
+		assertThat(posts, hasSize(1));
+	}
+
+	@Test
+	public void findPostByDate() throws Exception {
+		List<Post> postByDate = blogService.findPostByDate(postWithFakeCreatedDate.getCreated());
+		assertThat(postByDate, hasSize(1));
+	}
+
+	@Test
+	public void findPostById() throws Exception {
+		Post result = blogService.findPostById(post.getId());
+		assertNotNull(result);
 	}
 
 	@Test
 	public void editPost() throws Exception {
 		post.setAuthor(new Author("Edited!"));
 		blogService.update(post);
-
 		assertTrue(blogService.findPostByAuthor("Edited!") != null);
 	}
 

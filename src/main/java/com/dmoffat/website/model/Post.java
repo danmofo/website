@@ -193,6 +193,14 @@ public class Post extends BaseEntity {
         this.comments = comments;
     }
 
+    public LocalDateTime getCreated() {
+        return super.getCreated();
+    }
+
+    public LocalDateTime getUpdated() {
+        return super.getUpdated();
+    }
+
     private Post(Builder builder) {
         setTitle(builder.title);
         setPermalink(builder.permalink);
@@ -205,6 +213,7 @@ public class Post extends BaseEntity {
         setComments(builder.comments);
         setArchived(builder.archived);
         setDiffs(builder.diffs);
+        setCreated(builder.created);
     }
 
     public void addTag(Tag tag) {

@@ -57,7 +57,9 @@ public class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        this.created = LocalDateTime.now();
+        if(this.created == null) {
+            this.created = LocalDateTime.now();
+        }
     }
 
     @PreUpdate
