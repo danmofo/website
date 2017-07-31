@@ -2,6 +2,7 @@ package com.dmoffat.website.util;
 
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.test.UnitTest;
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -9,12 +10,9 @@ import org.mockito.Mockito;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -36,17 +34,16 @@ public class UtilsTests extends UnitTest {
 
     @Test
     public void copyPropertiesIgnoringNull() throws Exception {
+        BeanUtils.copyPropertiesIgnoringNull(tag2, tag);
 
-        BeanUtils.copyPropertiesIgnoringNull(tag, tag2);
-
-        fail("finish");
+        // Check that null properties haven't been copied, but non-null properties have
+        assertNull(tag2.getId());
+        assertEquals("Copy me", tag.getValue());
     }
 
     @Test
     public void getNullProperties() throws Exception {
-        Set<String> expected = new HashSet<>();
-        expected.add("created");
-        expected.add("updated");
+        Set<String> expected = Sets.newHashSet("created", "updated");
 
         assertEquals(expected, ReflectionUtils.getNullProperties(tag));
     }
