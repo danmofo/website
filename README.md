@@ -7,11 +7,15 @@ This is the source code that powers my personal blog. It was written to demonstr
 ## Prerequisites
 - Java 8 - http://openjdk.java.net/
 - Flyway, `brew install flyway`
+- Common Java repository, `git clone https://github.com/danmofo/common`
 
 ## Setup / development
 - Download the source, `git clone https://github.com/danmofo/website`
 - Install Java dependencies, `mvn install`
 - Set up the database, `./build.sh`. Note, this will remove any existing databases and recreate the schema from scratch. This is only for development purposes whilst the database is in a state of flux.
+
+## Tests
+There are a mixture of unit / integration tests available, to run them, make sure Maven is installed and run the following from the root directory: `mvn clean test`.
 
 ## Building / deployment
 - todo
@@ -20,3 +24,4 @@ This is the source code that powers my personal blog. It was written to demonstr
 - Add webpack for front-end build (see `spring-boot-webpack` for integration notes)
 - Externalise all secrets / credentials
 - Finish other todos littered throughout the source code
+- Add common code to a git repo
