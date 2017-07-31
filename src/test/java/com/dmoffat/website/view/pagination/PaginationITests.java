@@ -1,5 +1,6 @@
 package com.dmoffat.website.view.pagination;
 
+import com.dmoffat.website.model.Post;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.test.IntegrationTest;
 import org.junit.Test;
@@ -10,6 +11,8 @@ import static junit.framework.TestCase.fail;
 /**
  * Tests pagination related functionality
  *
+ * todo: don't rely on existing database state.
+ *
  * @author danielmoffat
  */
 public class PaginationITests extends IntegrationTest {
@@ -19,8 +22,14 @@ public class PaginationITests extends IntegrationTest {
 
     @Test
     public void test() throws Exception {
-        PageRequest request = new PageRequestImpl(1);
-        System.out.println(blogService.findAllPosts(PageRequest.firstPage()));
+        Page<Post> postPage = blogService.findAllPosts(PageRequest.firstPage());
+
+        System.out.println(postPage);
+
+        PageRequest secondPage = postPage.nextPage();
+
+        System.out.println(blogService.findAllPosts(secondPage));
+
         fail("Finish me.");
     }
 }

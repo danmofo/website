@@ -140,9 +140,6 @@ public class BlogServiceTests extends IntegrationTest {
 				.build();
 
 		blogService.save(postWithFakeCreatedDate);
-		System.out.println("------------------");
-		System.out.println(postWithFakeCreatedDate.getCreated());
-		System.out.println("------------------");
 
 		this.postWithAuthor = new Post.Builder()
 				.author(new Author("Mr Once Only"))

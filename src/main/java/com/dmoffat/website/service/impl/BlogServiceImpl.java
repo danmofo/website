@@ -54,15 +54,13 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Page<Post> findAllPosts(PageRequest pageRequest) {
         if(pageRequest == null) {
-            return Page.empty();
+            return Page.emptyPage();
         }
 
-        List<Post> posts = postDao.findAllPostsWithTags(pageRequest.getStart(), pageRequest.getRows());
+        List<Post> posts = postDao.findAllPostsWithTags((pageRequest.getPage() - 1) * 10, pageRequest.getRows());
         Long totalRows = postDao.count();
 
-        System.out.println("Total rows: " + totalRows);
-
-        return new PageImpl<>(posts, totalRows);
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override

@@ -1,6 +1,8 @@
 # ABS - Another Blog System
 
-## *Because the world is in dire need of even more blog systems.*
+> We need more blog systems
+>
+> --**<cite>No one ever</cite>**
 
 This is the source code that powers my personal blog. It was written to demonstrate my experience with Spring / Hibernate.
 
@@ -10,9 +12,16 @@ This is the source code that powers my personal blog. It was written to demonstr
 - Common Java repository, `git clone https://github.com/danmofo/common`
 
 ## Setup
+
+### Mac
 - Download the source, `git clone https://github.com/danmofo/website`
 - Install Java dependencies, `mvn install`
 - Set up the database, `./build.sh`. Note, this will remove any existing databases and recreate the schema from scratch. This is only for development purposes whilst the database is in a state of flux.
+
+### Windows
+Same steps as above, with a few changes..
+- Run flyway directly using the following: `/c/dev/java/flyway-4.2.0/flyway <command>`
+- Change the migrations folder path inside `flyway.conf` to: `filesystem:c:/users/dan/git/website/src/main/resources/db/migrations`
 
 ## Development
 - Use the `develop` branch for finished features ready for testing

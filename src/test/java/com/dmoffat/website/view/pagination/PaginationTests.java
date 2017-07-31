@@ -37,8 +37,8 @@ public class PaginationTests extends UnitTest {
         PageRequest request = new PageRequestImpl(1);
 
         Page<Post> postPage = blogService.findAllPosts(request);
-
         System.out.println(postPage);
+        System.out.println(postPage.nextPage());
 
     }
 }

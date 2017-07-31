@@ -106,6 +106,7 @@ public class AdminController {
             return new ResponseEntity<>(new ErrorApiResponse("111", "A post with that ID doesn't exist."), HttpStatus.BAD_REQUEST);
         }
 
+        // todo: find a cleaner way to achieve this
         // Keep hold of the original content before it gets overwritten
         String originalContent = post.getContent();
 
