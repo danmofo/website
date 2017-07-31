@@ -27,9 +27,6 @@ import static org.junit.Assert.*;
  * as needed before each test. Many of these tests use service methods themselves to create the required
  * state, which is not ideal.
  *
- * todo: add tests for versioning!
- * todo: test partial updates on the post entity
- * todo: rename tests and assign to unit / integration
  * todo: use an in memory database purely for testing
  * todo: add profile for testing with a different config to production
  * todo: test blog post with markdown content...
@@ -158,7 +155,7 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void updatingPostContentShouldCreateARevision() throws Exception {
+	public void shouldCreateARevisionWhenUpdatingPostContent() throws Exception {
 		String originalContent = this.postWithRevision.getContent();
 		this.postWithRevision.setContent("Revision two");
 		blogService.update(postWithRevision, originalContent);
@@ -166,7 +163,7 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void updatingPostTitleShouldntCreateARevision() throws Exception {
+	public void shouldntCreateARevisionWhenUpdatingPostTitle() throws Exception {
 		String originalContent = this.postWithRevision.getContent();
 		this.postWithRevision.setTitle("This is a brand new title!");
 		blogService.update(postWithRevision, originalContent);
@@ -174,7 +171,7 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void revisedPostShouldReturnTheCorrectRevisionNumber() throws Exception {
+	public void shouldReturnTheCorrectVersionWhenPostHasRevisions() throws Exception {
 		String originalContent = this.postWithRevision.getContent();
 		this.postWithRevision.setContent("Revision two");
 		blogService.update(postWithRevision, originalContent);
@@ -182,20 +179,20 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void newPostShouldHaveTheCorrectRevisionCount() throws Exception {
+	public void shouldHaveTheDefaultRevisionCount() throws Exception {
 		assertEquals(1, this.postWithRevision.revisionCount());
 	}
 
+	// todo(dan): maybe add some more complex examples that aren't just replacing a word.
 	@Test
-	public void viewingAnOldPostRevision() throws Exception {
+	public void shouldReturnTheCorrectVersion() throws Exception {
 		assertEquals("Revision one", postWithMultipleRevisions.version());
 		assertEquals("Revision two", postWithMultipleRevisions.version(2));
 		assertEquals("Revision three", postWithMultipleRevisions.version(3));
 	}
 
-	// The post is inserted before each test.
 	@Test
-	public void savePost() {
+	public void shouldSaveThePost() {
 		assertNotNull(post.getId());
 
 		// Id is only null when it hasn't been persisted to the DB
@@ -213,7 +210,7 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void updatePost() throws Exception {
+	public void shouldUpdateThePost() throws Exception {
 		post.setAuthor(new Author("Chrissy"));
 		blogService.update(post);
 
@@ -221,26 +218,26 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void publishPost() throws Exception {
+	public void shouldPublishThePost() throws Exception {
 		blogService.publish(post);
 		assertTrue(post.isPublished());
 	}
 
 	@Test
-	public void hidePost() throws Exception {
+	public void shouldHideThePost() throws Exception {
 		assertTrue(publishedPost.isPublished());
 		blogService.hide(publishedPost);
 		assertFalse(publishedPost.isPublished());
 	}
 
 	@Test
-	public void addTagToPost() throws Exception {
+	public void shouldAddATagToAPost() throws Exception {
 		blogService.addTagTo(post, new Tag.Builder().value("web").build());
 		assertTrue(post.getTags().size() == 1);
 	}
 
 	@Test
-	public void addMultipleTagsToPost() throws Exception {
+	public void shouldAddMultipleTagsToPost() throws Exception {
 		List<Tag> tags = new ArrayList<>();
 		tags.add(new Tag.Builder().value("web").build());
 		tags.add(new Tag.Builder().value("web2").build());
@@ -252,25 +249,25 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void removeTagFromPost() throws Exception {
+	public void shouldRemoveTagFromPost() throws Exception {
 		blogService.removeTagFrom(postWithTags, tag);
 		assertTrue(postWithTags.getTags().size() == 2);
 	}
 
 	@Test
-	public void removeMultipleTagsFromPost() throws Exception {
+	public void shouldRemoveMultipleTagsFromPost() throws Exception {
 		blogService.removeTagsFrom(postWithTags, Arrays.asList(tag, tag2, tag3));
 		assertTrue(postWithTags.getTags().size() == 0);
 	}
 
 	@Test
-	public void addCommentToPost() throws Exception {
+	public void shouldAddCommentToPost() throws Exception {
 		blogService.addCommentTo(post, basicComment);
 		assertTrue(post.getComments().size() == 1);
 	}
 
 	@Test
-	public void removeCommentFromPost() throws Exception {
+	public void shouldRemoveCommentFromPost() throws Exception {
 		blogService.removeCommentFrom(postWithComment, basicComment);
 		assertTrue(postWithComment.getComments().size() == 0);
 		entityManager.flush();
@@ -279,14 +276,18 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void removeComment() throws Exception {
+	public void shouldRemoveComment() throws Exception {
 		blogService.remove(basicComment);
 		assertNull(basicComment.getPost());
 	}
 
 	@Test
-	public void findTag() throws Exception {
+	public void shouldFindTagById() throws Exception {
 		assertNotNull(blogService.findTagById(tag.getId()));
+	}
+
+	@Test
+	public void shouldFindTagByValue() throws Exception {
 		assertNotNull(blogService.findTagByValue(tag.getValue()));
 	}
 
@@ -294,16 +295,17 @@ public class BlogServiceTests extends IntegrationTest {
 	@Test
 	public void findRecentPosts() throws Exception {
 		assertNotNull(blogService.findRecentPosts());
+		fail("Finish me!");
 	}
 
 	@Test
-	public void findPostByAuthor() throws Exception {
+	public void shouldFindPostByAuthor() throws Exception {
 		List<Post> postByAuthor = blogService.findPostByAuthor("Mr Once Only");
 		assertThat(postByAuthor, hasSize(1));
 	}
 
 	@Test
-	public void findPostBetween() throws Exception {
+	public void shouldFindPostsBetweenTwoDates() throws Exception {
 		LocalDateTime start = fakeCreatedDate.minusDays(1);
 		LocalDateTime end = fakeCreatedDate.plusDays(1);
 		List<Post> posts = blogService.findPostBetween(start, end);
@@ -312,26 +314,26 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
-	public void findPostByDate() throws Exception {
+	public void shouldFindPostsOnASpecificDate() throws Exception {
 		List<Post> postByDate = blogService.findPostByDate(postWithFakeCreatedDate.getCreated());
 		assertThat(postByDate, hasSize(1));
 	}
 
 	@Test
-	public void findPostById() throws Exception {
+	public void shouldFindPostById() throws Exception {
 		Post result = blogService.findPostById(post.getId());
 		assertNotNull(result);
 	}
 
 	@Test
-	public void editPost() throws Exception {
+	public void shouldEditThePost() throws Exception {
 		post.setAuthor(new Author("Edited!"));
 		blogService.update(post);
 		assertTrue(blogService.findPostByAuthor("Edited!") != null);
 	}
 
 	@Test
-	public void archivePost() throws Exception {
+	public void shouldArchiveThePost() throws Exception {
 		blogService.archive(post.getId());
 		assertTrue(post.isArchived());
 	}

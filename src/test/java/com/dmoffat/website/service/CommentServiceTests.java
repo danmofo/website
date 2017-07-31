@@ -34,8 +34,9 @@ public class CommentServiceTests extends UnitTest {
     }
 
     // Test the clean function on multiple inputs and make sure the malicious content is removed.
+    // todo(dan): Move this into multiple tests
     @Test
-    public void testCleaningComment() throws Exception {
+    public void shouldRemoveUnwantedCharacters() throws Exception {
         assertEquals(basicComment.getContent(), commentService.clean(basicComment.getContent()));
         assertEquals(commentWithAllowedHtml.getContent(), commentService.clean(commentWithAllowedHtml.getContent()));
         assertEquals(markdownComment.getContent(), commentService.clean(markdownComment.getContent()));
@@ -49,7 +50,7 @@ public class CommentServiceTests extends UnitTest {
 
     // Test the render function can render markdown to HTML
     @Test
-    public void testRenderingComment() throws Exception {
+    public void shouldRenderMarkdownToHtml() throws Exception {
         assertEquals("<h1>This is a title</h1>\n", commentService.render(markdownComment.getContent()));
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -27,55 +26,50 @@ public class BlogControllerTests extends IntegrationTest {
 
     // Make sure all autowiring works as expected
     @Test
-    public void testContextLoads() throws Exception {
+    public void shouldWireBeans() throws Exception {
         assertNotNull(blogController);
     }
 
     @Test
-    public void testHome() throws Exception {
+    public void shouldReturnTheHomePage() throws Exception {
         this.mockMvc
                 .perform(get("/blog/"))
-                .andDo(print())
                 .andExpect(view().name("home"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Home")));
     }
 
     @Test
-    public void testArchive() throws Exception {
+    public void shouldReturnArchivedPosts() throws Exception {
         this.mockMvc
                 .perform(get("/blog/archive"))
-                .andDo(print())
                 .andExpect(view().name("archive"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(("Archive"))));
     }
 
     @Test
-    public void testListTags() throws Exception {
+    public void shoudldReturnAListOfTags() throws Exception {
         this.mockMvc
                 .perform(get("/blog/tags"))
-                .andDo(print())
                 .andExpect(view().name("tags"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(("Tags"))));
     }
 
     @Test
-    public void testListByYear() throws Exception {
+    public void shouldReturnPostsByYear() throws Exception {
         this.mockMvc
                 .perform(get("/blog/2017/"))
-                .andDo(print())
                 .andExpect(view().name("year"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(("Year"))));
     }
 
     @Test
-    public void testListByYearAndMonth() throws Exception {
+    public void shouldReturnPostsByYearAndMonth() throws Exception {
         this.mockMvc
                 .perform(get("/blog/2017/05/"))
-                .andDo(print())
                 .andExpect(view().name("month"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(("Year and month"))));

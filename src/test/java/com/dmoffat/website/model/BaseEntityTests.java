@@ -34,12 +34,12 @@ public class BaseEntityTests extends IntegrationTest {
     }
 
     @Test
-    public void testCreatedDateIsSetOnPersist() throws Exception {
+    public void shouldSetCreatedDateOnPersist() throws Exception {
         assertNotNull(post.getCreated());
     }
 
     @Test
-    public void testCreatedIsNotSetWhenCreatedIsPresent() throws Exception {
+    public void shouldntSetCreatedOnPersistWhenItsAlreadyBeenSet() throws Exception {
         LocalDateTime dateTime = LocalDateTime.of(2017, 1, 1, 0, 0, 0);
         Post post = new Post.Builder()
                 .title("Foo bar")
@@ -54,18 +54,19 @@ public class BaseEntityTests extends IntegrationTest {
     }
 
     @Test
-    public void testUpdatedDateIsSetOnUpdate() throws Exception {
+    public void shouldSetUpdatedDateWhenUpdated() throws Exception {
         post.setTitle("An updated title.");
         postDao.update(post);
 
-        // Force an update, by manually calling flush().
+        // Force an update, by manually calling flush() - otherwise the update statement would not be fired until
+        // the transaction ends (after the test method is done executing)
         postDao.getEntityManager().flush();
 
         assertNotNull(post.getUpdated());
     }
 
     @Test
-    public void testIdIsSetOnPersist() throws Exception {
+    public void shouldSetTheIdWhenPersisted() throws Exception {
         assertNotNull(post.getId());
     }
 }

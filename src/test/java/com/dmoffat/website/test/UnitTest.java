@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
+ * A base unit test.
+ *
  * @author danielmoffat
  */
 @RunWith(MockitoJUnitRunner.class)
