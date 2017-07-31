@@ -1,12 +1,18 @@
 package com.dmoffat.website.service.impl;
 
-import com.dmoffat.website.dao.*;
+import com.dmoffat.website.dao.CommentDao;
+import com.dmoffat.website.dao.PatchDao;
+import com.dmoffat.website.dao.PostDao;
+import com.dmoffat.website.dao.TagDao;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Patch;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.time.TimeProvider;
+import com.dmoffat.website.view.pagination.Page;
+import com.dmoffat.website.view.pagination.PageImpl;
+import com.dmoffat.website.view.pagination.PageRequest;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import name.fraser.neil.plaintext.diff_match_patch;
@@ -43,6 +49,20 @@ public class BlogServiceImpl implements BlogService {
         this.patchDao = patchDao;
         this.markdownParser = Parser.builder().build();
         this.markdownRenderer = HtmlRenderer.builder().build();
+    }
+
+    @Override
+    public Page<Post> findAllPosts(PageRequest pageRequest) {
+        if(pageRequest == null) {
+            return Page.empty();
+        }
+
+        List<Post> posts = postDao.findAllPostsWithTags(pageRequest.getStart(), pageRequest.getRows());
+        Long totalRows = postDao.count();
+
+        System.out.println("Total rows: " + totalRows);
+
+        return new PageImpl<>(posts, totalRows);
     }
 
     @Override

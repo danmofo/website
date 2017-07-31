@@ -101,4 +101,20 @@ public class PostDaoImpl extends PostDao {
 
         return query.getResultList();
     }
+
+    @Override
+    public List<Post> findAllPostsWithTags(int start, int rows) {
+        CriteriaQuery<Post> criteriaQuery = criteriaQuery();
+        Root<Post> root = criteriaQuery.from(Post.class);
+        criteriaQuery.select(root).distinct(true);
+        root.fetch("author");
+        root.join("tags", JoinType.LEFT);
+
+        TypedQuery<Post> query = getEntityManager().createQuery(criteriaQuery);
+        query
+            .setFirstResult(start)
+            .setMaxResults(rows);
+
+        return query.getResultList();
+    }
 }

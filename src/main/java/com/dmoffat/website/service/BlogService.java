@@ -3,6 +3,8 @@ package com.dmoffat.website.service;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
+import com.dmoffat.website.view.pagination.Page;
+import com.dmoffat.website.view.pagination.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +40,8 @@ public interface BlogService {
     List<Post> findAllPostsWithTagsAndCommentsAndDiffs();
     List<Tag> findAllTags();
     List<Comment> findAllComments();
+
+    Page<Post> findAllPosts(PageRequest pageRequest);
 
     /** Tag queries **/
     Tag findTagByValue(String value);

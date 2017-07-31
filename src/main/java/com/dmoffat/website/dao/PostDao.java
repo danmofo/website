@@ -19,4 +19,6 @@ public abstract class PostDao extends GenericJpaDao<Post, Long> {
     public abstract List<Post> findAllPostsByAuthor(String authorName, boolean fetchTags);
     public abstract List<Post> findAllPostsByDate(LocalDateTime date, boolean fetchTags);
     public abstract List<Post> findAllPostsByDateBetween(LocalDateTime start, LocalDateTime end, boolean fetchTags);
+
+    public abstract List<Post> findAllPostsWithTags(int start, int rows);
 }
