@@ -47,18 +47,22 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Post> findAllPosts() {
-        return postDao.findAllPosts(false);
+        return postDao.findAll();
     }
 
     @Override
     public List<Post> findAllPostsWithTags() {
-        return postDao.findAllPosts(true);
+        return postDao.findAllPostsWithTags();
     }
 
     @Override
     public List<Post> findAllPostsWithTagsAndComments() {
-        // todo:
-        return null;
+        return postDao.findAllPostsWithTagsAndComments();
+    }
+
+    @Override
+    public List<Post> findAllPostsWithTagsAndCommentsAndDiffs() {
+        return postDao.findAllPostsWithTagsAndCommentsAndDiffs();
     }
 
     @Override
@@ -106,13 +110,14 @@ public class BlogServiceImpl implements BlogService {
         diff_match_patch diffMatchPatch = new diff_match_patch();
         LinkedList<diff_match_patch.Diff> diffs = diffMatchPatch.diff_main(originalContent, post.getContent());
 
-        diff_match_patch.Diff first = diffs.get(0);
-        if(!first.operation.equals(diff_match_patch.Operation.EQUAL)) {
+        // If both strings are equal, there is 1 "diff", which just states they are equal
+        if(diffs.size() > 1 && diffs.get(0).operation.equals(diff_match_patch.Operation.EQUAL)) {
             // Create a patch, containing the differences between the current version and the new version
             Patch patch = new Patch();
-            patch.setPost(post);
             patch.setText(diffMatchPatch.patch_toText(diffMatchPatch.patch_make(diffs)));
             patch.setModified(timeProvider.now());
+            patch.setPost(post);
+            post.addDiff(patch);
             patchDao.create(patch);
         }
 
@@ -177,8 +182,7 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(comment, "comment cannot be null");
 
         post.addComment(comment);
-        comment.setPost(post);
-        postDao.update(post);
+        commentDao.create(comment);
     }
 
     @Override
@@ -187,7 +191,6 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(comment, "comment cannot be null");
 
         post.removeComment(comment);
-        comment.setPost(null);
         postDao.update(post);
     }
 

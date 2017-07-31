@@ -70,7 +70,7 @@ public class AdminController {
 
     @GetMapping("/management/post/list")
     public ResponseEntity<ApiResponse> listPosts() {
-        List<Post> posts = blogService.findAllPostsWithTags();
+        List<Post> posts = blogService.findAllPostsWithTagsAndComments();
         return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("posts", posts).build(), HttpStatus.OK);
     }
 

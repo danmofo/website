@@ -1,15 +1,10 @@
 package com.dmoffat.website.model;
 
-import com.dmoffat.website.BlogApplication;
 import com.dmoffat.website.dao.PostDao;
+import com.dmoffat.website.test.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.transaction.Transactional;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -20,12 +15,7 @@ import static org.junit.Assert.assertNotNull;
  * @author dan
  */
 
-@SpringBootTest(
-        classes = BlogApplication.class,
-        properties = {"auth.secret=test_secret"})
-@Transactional
-@RunWith(SpringRunner.class)
-public class BaseEntityTests {
+public class BaseEntityTests extends IntegrationTest {
 
     private Post post;
 
@@ -47,7 +37,7 @@ public class BaseEntityTests {
 
     @Test
     public void testUpdatedDateIsSetOnUpdate() throws Exception {
-        post.setAuthor(new Author("Daniel Moffat"));
+        post.setTitle("An updated title.");
         postDao.update(post);
 
         // Force an update, by manually calling flush().

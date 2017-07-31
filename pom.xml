@@ -108,10 +108,14 @@
 			<artifactId>diff_match_patch</artifactId>
 			<version>current</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
 
 
-
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<plugins>

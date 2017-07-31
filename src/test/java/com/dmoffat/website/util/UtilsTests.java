@@ -1,6 +1,7 @@
 package com.dmoffat.website.util;
 
 import com.dmoffat.website.model.Tag;
+import com.dmoffat.website.test.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.when;
  *
  * @author dan
  */
-public class UtilsTests {
+public class UtilsTests extends UnitTest {
     private static final Cookie TEST_COOKIE = new Cookie("test", "value");
 
     private Tag tag;

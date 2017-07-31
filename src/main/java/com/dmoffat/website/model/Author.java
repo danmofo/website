@@ -1,6 +1,5 @@
 package com.dmoffat.website.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -10,11 +9,7 @@ import javax.persistence.*;
  */
 @Table(name = "author")
 @Entity
-@JsonIgnoreProperties(value = {"id"})
-public class Author {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Author extends BaseEntity {
 
     @NotEmpty
     private String name;

@@ -1,20 +1,14 @@
 package com.dmoffat.website.controller;
 
+import com.dmoffat.website.test.IntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -26,16 +20,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author dan
  */
 
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest({"auth.secret=test_secret"})
-public class BlogControllerTests {
+public class BlogControllerTests extends IntegrationTest {
 
     @Autowired
     private BlogController blogController;
-
-    @Autowired
-    private MockMvc mockMvc;
 
     // Make sure all autowiring works as expected
     @Test

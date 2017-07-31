@@ -21,7 +21,8 @@ public class Post extends BaseEntity {
     @NotEmpty
     private String permalink;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "author_id")
     private Author author;
 
     @NotEmpty
@@ -42,19 +43,19 @@ public class Post extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments;
 
     private Boolean archived = false;
 
     @OneToMany(mappedBy = "post")
-    private List<Patch> diffs = new ArrayList<>();
+    private List<Patch> diffs;
 
     @Column(name = "original_content")
     private String originalContent;
 
     public int revisionCount() {
-        return diffs == null ? 0 : diffs.size();
+        return diffs == null ? 0 : diffs.size() + 1;
     }
 
     public String version() {
@@ -95,6 +96,9 @@ public class Post extends BaseEntity {
     }
 
     public Post() {
+        this.diffs = new ArrayList<>();
+        this.tags = new HashSet<>();
+        this.comments = new HashSet<>();
     }
 
     public Boolean getArchived() {
@@ -181,11 +185,11 @@ public class Post extends BaseEntity {
         this.tags = tags;
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 
@@ -216,7 +220,7 @@ public class Post extends BaseEntity {
 
     public void addComment(Comment comment) {
         if(this.comments == null) {
-            this.comments = new ArrayList<>();
+            this.comments = new HashSet<>();
         }
 
         this.comments.add(comment);
@@ -226,6 +230,15 @@ public class Post extends BaseEntity {
     public void removeComment(Comment comment) {
         comment.setPost(null);
         this.comments.remove(comment);
+    }
+
+    public void addDiff(Patch diff) {
+        if(this.diffs == null) {
+            this.diffs = new ArrayList<>();
+        }
+
+        diff.setPost(this);
+        this.diffs.add(diff);
     }
 
     public static final class Builder {
@@ -241,12 +254,15 @@ public class Post extends BaseEntity {
         private boolean published;
         private LocalDateTime posted;
         private Set<Tag> tags;
-        private List<Comment> comments;
+        private Set<Comment> comments;
         private Boolean archived;
         private List<Patch> diffs;
 
         public Builder() {
             published = false;
+            tags = new HashSet<>();
+            comments = new HashSet<>();
+            diffs = new ArrayList<>();
         }
 
         public Builder(Post copy) {
@@ -330,7 +346,7 @@ public class Post extends BaseEntity {
             return this;
         }
 
-        public Builder comments(List<Comment> val) {
+        public Builder comments(Set<Comment> val) {
             comments = val;
             return this;
         }
@@ -355,8 +371,6 @@ public class Post extends BaseEntity {
         sb.append(", htmlContent='").append(htmlContent).append('\'');
         sb.append(", published=").append(published);
         sb.append(", posted=").append(posted);
-        sb.append(", tags=").append(tags);
-        sb.append(", comments=").append(comments);
         sb.append(", archived=").append(archived);
         sb.append('}');
         return sb.toString();

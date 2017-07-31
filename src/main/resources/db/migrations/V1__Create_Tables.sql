@@ -1,106 +1,95 @@
 CREATE SCHEMA IF NOT EXISTS `dmoffat.com`;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`author` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.author (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
 )
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `author_id` INT(11) NULL DEFAULT NULL,
-  `title` VARCHAR(255) NULL DEFAULT NULL,
-  `content` TEXT NULL DEFAULT NULL,
-  `original_content` TEXT NULL DEFAULT NULL,
-  `html_content` TEXT NULL DEFAULT NULL,
-  `updated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `posted_on` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `published` TINYINT(1) NULL DEFAULT NULL,
-  `created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  `permalink` VARCHAR(255) NOT NULL,
-  `archived` TINYINT(1) NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `permalink_UNIQUE` (`permalink` ASC),
-  CONSTRAINT `fk_author`
-      FOREIGN KEY (`author_id`)
-      REFERENCES `dmoffat.com`.`author` (`id`)
-      ON DELETE NO ACTION
-      ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.post (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  author_id INT(11),
+  title VARCHAR(255),
+  content TEXT,
+  original_content TEXT,
+  html_content TEXT,
+  updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  posted_on DATETIME DEFAULT CURRENT_TIMESTAMP,
+  published TINYINT(1),
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  permalink VARCHAR(255) NOT NULL,
+  archived TINYINT(1) DEFAULT 1,
+  PRIMARY KEY (id),
+  UNIQUE INDEX permalink_UNIQUE (permalink ASC),
+  CONSTRAINT fk_author
+      FOREIGN KEY (author_id)
+      REFERENCES `dmoffat.com`.author (id)
+)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post_comment` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `post_id` INT(11) NOT NULL,
-  `name` VARCHAR(255) NOT NULL DEFAULT 'Anonymous',
-  `content` TEXT NULL DEFAULT NULL,
-  `updated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  INDEX `fk_post_comment_post_idx` (`post_id` ASC),
-  CONSTRAINT `fk_post_comment_post`
-    FOREIGN KEY (`post_id`)
-    REFERENCES `dmoffat.com`.`post` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.post_comment (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  post_id INT(11) NOT NULL,
+  name VARCHAR(255) NOT NULL DEFAULT 'Anonymous',
+  content TEXT,
+  updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_post_comment_post
+    FOREIGN KEY (post_id)
+    REFERENCES `dmoffat.com`.post (id))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`tag` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `value` VARCHAR(255) NOT NULL,
-  `updated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `value_UNIQUE` (`value` ASC))
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.tag (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  value VARCHAR(255) NOT NULL,
+  updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE INDEX value_UNIQUE (value ASC))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post_tag` (
-  `tag_id` INT(11) NOT NULL,
-  `post_id` INT(11) NOT NULL,
-  PRIMARY KEY (`tag_id`, `post_id`),
-  INDEX `fk_tag_has_post_post1_idx` (`post_id` ASC),
-  INDEX `fk_tag_has_post_tag1_idx` (`tag_id` ASC),
-  CONSTRAINT `fk_tag_has_post_tag1`
-    FOREIGN KEY (`tag_id`)
-    REFERENCES `dmoffat.com`.`tag` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_tag_has_post_post1`
-    FOREIGN KEY (`post_id`)
-    REFERENCES `dmoffat.com`.`post` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.post_tag (
+  tag_id INT(11) NOT NULL,
+  post_id INT(11) NOT NULL,
+  PRIMARY KEY (tag_id, post_id),
+  CONSTRAINT fk_tag_has_post_tag1
+    FOREIGN KEY (tag_id)
+    REFERENCES `dmoffat.com`.tag (id),
+  CONSTRAINT fk_tag_has_post_post1
+    FOREIGN KEY (post_id)
+    REFERENCES `dmoffat.com`.post (id))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`user` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(255) NOT NULL,
-  `password` VARCHAR(255) NULL DEFAULT NULL,
-  `updated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`))
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.user (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL,
+  password VARCHAR(255),
+  updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
-CREATE TABLE IF NOT EXISTS `dmoffat.com`.`post_content_revision` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `post_id` INT(11) NOT NULL,
-  `patch` TEXT NULL DEFAULT NULL,
-  `modified` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_post_revision_post1_idx` (`post_id` ASC),
-  CONSTRAINT `fk_post_revision_post1`
-    FOREIGN KEY (`post_id`)
-    REFERENCES `dmoffat.com`.`post` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `dmoffat.com`.post_content_revision (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  post_id INT(11) NOT NULL,
+  patch TEXT,
+  modified DATETIME,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_post_revision_post1
+    FOREIGN KEY (post_id)
+    REFERENCES `dmoffat.com`.post (id))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+CHARACTER SET = utf8;
 
 insert into tag (value) values ('next generation');
 insert into tag (value) values ('stable');

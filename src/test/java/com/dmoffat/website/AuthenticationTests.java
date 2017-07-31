@@ -4,23 +4,18 @@ import com.dmoffat.website.dao.UserDao;
 import com.dmoffat.website.model.User;
 import com.dmoffat.website.service.AuthenticationService;
 import com.dmoffat.website.service.exception.UsernameAlreadyExistsException;
+import com.dmoffat.website.test.IntegrationTest;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.Cookie;
-import javax.transaction.Transactional;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,13 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author dan
  */
 
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest({"auth.secret=test_secret"})
-@Transactional
-public class AuthenticationTests {
-    @Autowired
-    private MockMvc mockMvc;
+
+public class AuthenticationTests extends IntegrationTest {
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -51,7 +41,6 @@ public class AuthenticationTests {
     @Autowired
     private UserDao userDao;
 
-    // Test data
     private User user;
 
     @Value("${auth.secret}")

@@ -2,6 +2,7 @@ package com.dmoffat.website.service;
 
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.service.impl.MarkdownCommentService;
+import com.dmoffat.website.test.UnitTest;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import org.junit.Before;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author dan
  */
-public class CommentServiceTests {
+public class CommentServiceTests extends UnitTest {
     private Comment basicComment;
     private Comment commentWithAllowedHtml;
     private Comment commentWithMaliciousHtml;

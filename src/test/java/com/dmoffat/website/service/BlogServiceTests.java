@@ -1,18 +1,16 @@
 package com.dmoffat.website.service;
 
-import com.dmoffat.website.BlogApplication;
 import com.dmoffat.website.model.Author;
 import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
+import com.dmoffat.website.test.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,16 +24,18 @@ import static org.junit.Assert.*;
  * as needed before each test. Many of these tests use service methods themselves to create the required
  * state, which is not ideal.
  *
+ * todo: add tests for versioning!
+ * todo: test partial updates on the post entity
+ * todo: rename tests and assign to unit / integration
  * todo: use an in memory database purely for testing
  * todo: add profile for testing with a different config to production
  * todo: test blog post with markdown content...
+ * todo: test applying the patches to content to assert that the patching library actually works as intended.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(
-		classes = BlogApplication.class,
-		properties = {"auth.secret=test_secret"})
-@Transactional
-public class BlogServiceTests {
+public class BlogServiceTests extends IntegrationTest {
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
     @Autowired
     private BlogService blogService;
@@ -44,6 +44,8 @@ public class BlogServiceTests {
     private Post publishedPost;
     private Post postWithTags;
     private Post postWithComment;
+    private Post postWithRevision;
+    private Post postWithMultipleRevisions;
 
     private Tag tag;
     private Tag tag2;
@@ -95,10 +97,72 @@ public class BlogServiceTests {
 				.author(new Author("Daniel Moffat"))
 				.content("My test post")
 				.title("My title")
-				.permalink("foobar").build();
+				.permalink("foobar")
+				.build();
 		this.postWithComment.addComment(basicComment);
 
 		blogService.save(postWithComment);
+
+		this.postWithRevision = new Post.Builder()
+				.author(new Author("Daniel Moffat"))
+				.content("Revision one")
+				.title("This is a post with revisions")
+				.permalink("post-with-revisions")
+				.build();
+
+		blogService.save(postWithRevision);
+
+		String originalContent = "Revision one";
+
+		this.postWithMultipleRevisions = new Post.Builder()
+				.author(new Author("Daniel Moffat"))
+				.content(originalContent)
+				.title("This is a post with revisions")
+				.permalink("post-with-revisions-23455")
+				.build();
+
+		blogService.save(postWithMultipleRevisions);
+
+		this.postWithMultipleRevisions.setContent("Revision two");
+		blogService.update(postWithMultipleRevisions, originalContent);
+		this.postWithMultipleRevisions.setContent("Revision three");
+		blogService.update(postWithMultipleRevisions, "Revision two");
+	}
+
+	@Test
+	public void updatingPostContentShouldCreateARevision() throws Exception {
+		String originalContent = this.postWithRevision.getContent();
+		this.postWithRevision.setContent("Revision two");
+		blogService.update(postWithRevision, originalContent);
+		assertTrue(postWithRevision.getDiffs().size() > 0);
+	}
+
+	@Test
+	public void updatingPostTitleShouldntCreateARevision() throws Exception {
+		String originalContent = this.postWithRevision.getContent();
+		this.postWithRevision.setTitle("This is a brand new title!");
+		blogService.update(postWithRevision, originalContent);
+		assertTrue(postWithRevision.getDiffs().size() == 0);
+	}
+
+	@Test
+	public void revisedPostShouldReturnTheCorrectRevisionNumber() throws Exception {
+		String originalContent = this.postWithRevision.getContent();
+		this.postWithRevision.setContent("Revision two");
+		blogService.update(postWithRevision, originalContent);
+		assertEquals(2, postWithRevision.revisionCount());
+	}
+
+	@Test
+	public void newPostShouldHaveTheCorrectRevisionCount() throws Exception {
+		assertEquals(1, this.postWithRevision.revisionCount());
+	}
+
+	@Test
+	public void viewingAnOldPostRevision() throws Exception {
+		assertEquals("Revision one", postWithMultipleRevisions.version());
+		assertEquals("Revision two", postWithMultipleRevisions.version(2));
+		assertEquals("Revision three", postWithMultipleRevisions.version(3));
 	}
 
 	// The post is inserted before each test.
@@ -181,6 +245,9 @@ public class BlogServiceTests {
 	public void removeCommentFromPost() throws Exception {
 		blogService.removeCommentFrom(postWithComment, basicComment);
 		assertTrue(postWithComment.getComments().size() == 0);
+		entityManager.flush();
+		Post post = blogService.findPostById(postWithComment.getId());
+		assertTrue(post.getComments().size() == 0);
 	}
 
 	@Test
