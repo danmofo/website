@@ -80,7 +80,7 @@ public class BlogServiceImpl implements BlogService {
             pageRequest = PageRequest.firstPage();
         }
 
-        List<Post> posts = postDao.findAllPublishedPosts(pageRequest.getStartCount(), pageRequest.getRows());
+        List<Post> posts = postDao.findAllPublishedPosts(pageRequest.getStartCount(), pageRequest.getRows(), pageRequest.getSort());
         Long totalRows = postDao.countPublishedPosts();
 
         return new PageImpl<>(posts, pageRequest, totalRows);
@@ -296,10 +296,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    // todo: add pagination if needed
     public Page<Post> findPostByAuthor(String authorName, PageRequest pageRequest) {
         Objects.requireNonNull(authorName, "authorName cannot be null");
 
-        List<Post> posts = postDao.findAllPostsByAuthor(authorName, true);
+        List<Post> posts = postDao.findAllPostsByAuthor(authorName, true, pageRequest.getStartCount(), pageRequest.getRows(), pageRequest.getSort());
         Long totalRows = postDao.countPostsByAuthor(authorName);
 
         return new PageImpl<>(posts, pageRequest, totalRows);

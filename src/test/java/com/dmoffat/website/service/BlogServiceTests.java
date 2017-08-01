@@ -6,7 +6,11 @@ import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.test.IntegrationTest;
+import com.dmoffat.website.util.TestUtils;
 import com.dmoffat.website.view.pagination.Page;
+import com.dmoffat.website.view.pagination.PageRequest;
+import com.dmoffat.website.view.pagination.PageRequestImpl;
+import com.dmoffat.website.view.pagination.Sort;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,10 @@ public class BlogServiceTests extends IntegrationTest {
     private Post postWithMultipleRevisions;
     private Post postWithFakeCreatedDate;
     private Post postWithAuthor;
+
+    private Post postForSorting;
+    private Post postForSorting2;
+    private Post postForSorting3;
 
     private LocalDateTime fakeCreatedDate = LocalDateTime.of(2017, 1, 1, 0, 0);
 
@@ -150,6 +158,14 @@ public class BlogServiceTests extends IntegrationTest {
 				.build();
 
 		blogService.save(postWithAuthor);
+
+		this.postForSorting = TestUtils.createRandomPostWithAuthor("sort-test");
+		this.postForSorting2 = TestUtils.createRandomPostWithAuthor("sort-test");
+		this.postForSorting3 = TestUtils.createRandomPostWithAuthor("sort-test");
+
+		blogService.save(postForSorting);
+		blogService.save(postForSorting2);
+		blogService.save(postForSorting3);
 	}
 
 	@Test
@@ -338,14 +354,56 @@ public class BlogServiceTests extends IntegrationTest {
 	}
 
 	@Test
+	// todo: change this to not depend on db state
 	public void shouldFindPostsThatArePublished() throws Exception {
 		Page<Post> publishedPosts = blogService.findAllPublishedPosts();
-		assertTrue("Expected 1, but got: " + publishedPosts.getTotalResults(),publishedPosts.getTotalResults() == 1);
+		assertTrue("Expected 4, but got: " + publishedPosts.getTotalResults(),publishedPosts.getTotalResults() == 4);
 		System.out.println(publishedPosts);
 	}
 
 	@Test
-	public void shouldFindPostsThatAreUnpublished() throws Exception {
-		fail("Implement me!");
+	public void postsShouldBeSortableByIdAscending() throws Exception {
+		// 3 entities are inserted before this test executes, the third one will have the highest ID.
+		Long expectedId = postForSorting.getId();
+		PageRequest request = new PageRequestImpl(1, Sort.idAsc());
+		Page<Post> posts = blogService.findPostByAuthor("sort-test", request);
+
+		assertEquals(expectedId, posts.getResults().get(0).getId());
+	}
+
+
+	@Test
+	public void postsShouldBeSortableByIdDescending() throws Exception {
+		Long expectedId = postForSorting3.getId();
+		PageRequest request = new PageRequestImpl(1, Sort.idDesc());
+		Page<Post> posts = blogService.findPostByAuthor("sort-test", request);
+
+		assertEquals(expectedId, posts.getResults().get(0).getId());
+	}
+
+	// todo: move into unit test
+	@Test
+	public void shouldConvertValidStringIntoASortObject() throws Exception {
+		String valid = "ID_ASCENDING";
+		String valid2 = "ID_DESCENDING";
+
+		assertEquals(Sort.idAsc(), Sort.fromString(valid));
+		assertEquals(Sort.idDesc(), Sort.fromString(valid2));
+	}
+
+	// todo: move into unit test
+	@Test
+	public void shouldReturnTheDefaultSortWhenGivenAnInvalidString() throws Exception {
+		String invalid = "IDASCENDING";
+		String invalid2 = "ASCENDING_ID";
+		String invalid3 = "FAKE_DESCENDING";
+		String invalid4 = "ID_FAKE";
+
+		Sort defaultSort = Sort.defaultSort();
+
+		assertEquals(defaultSort, Sort.fromString(invalid));
+		assertEquals(defaultSort, Sort.fromString(invalid2));
+		assertEquals(defaultSort, Sort.fromString(invalid3));
+		assertEquals(defaultSort, Sort.fromString(invalid4));
 	}
 }

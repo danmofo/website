@@ -3,6 +3,7 @@ package com.dmoffat.website.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,10 +11,12 @@ import java.time.LocalDateTime;
 /**
  * A base entity
  *
+ * todo: remove the JsonView annotation, this stinks.
+ *
  * @author dan
  */
 @MappedSuperclass
-@JsonIgnoreProperties(value = {"updated", "id"})
+@JsonIgnoreProperties(value = {"updated"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseEntity {
 
@@ -23,9 +26,12 @@ public class BaseEntity {
     // tests to fail with a "detached entity passed to persist" exception.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // todo: address this JsonView issue, look at an object mapper instead
+    @JsonView(Views.Summary.class)
     public Long id;
 
     @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
+    @JsonView(Views.Summary.class)
     protected LocalDateTime created;
 
     @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
