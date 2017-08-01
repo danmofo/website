@@ -72,7 +72,7 @@ public class AdminController {
     @GetMapping("/management/post/list")
     @JsonView(Views.Summary.class)
     public ResponseEntity<ApiResponse> listPosts(@RequestAttribute(name = "pageRequest") PageRequest pageRequest) {
-        Page<Post> posts = blogService.findAllPosts(pageRequest);
+        Page<Post> posts = blogService.findAllPublishedPosts(pageRequest);
 
         return new ResponseEntity<>(new PagedApiResponse(posts), HttpStatus.OK);
     }

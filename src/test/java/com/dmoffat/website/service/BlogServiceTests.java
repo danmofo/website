@@ -340,7 +340,12 @@ public class BlogServiceTests extends IntegrationTest {
 	@Test
 	public void shouldFindPostsThatArePublished() throws Exception {
 		Page<Post> publishedPosts = blogService.findAllPublishedPosts();
-
 		assertTrue("Expected 1, but got: " + publishedPosts.getTotalResults(),publishedPosts.getTotalResults() == 1);
+		System.out.println(publishedPosts);
+	}
+
+	@Test
+	public void shouldFindPostsThatAreUnpublished() throws Exception {
+		fail("Implement me!");
 	}
 }

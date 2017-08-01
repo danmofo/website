@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,12 +25,27 @@ public class PostDaoImpl extends PostDao {
 
     @Override
     public List<Post> findAllPublishedPosts(int start, int rows) {
-        return Collections.emptyList();
+        return findAllPostsByPublished(true, start, rows);
     }
 
     @Override
     public Long countPublishedPosts() {
-        return 0L;
+        return countAllByPublished(true);
+    }
+
+    @Override
+    public List<Post> findAllUnpublishedPosts() {
+        return findAllPostsByPublished(false, DEFAULT_START, DEFAULT_ROWS);
+    }
+
+    @Override
+    public List<Post> findAllUnpublishedPosts(int start, int rows) {
+        return findAllPostsByPublished(false, start, rows);
+    }
+
+    @Override
+    public Long countUnpublishedPosts() {
+        return countAllByPublished(false);
     }
 
     @Override
@@ -154,6 +168,7 @@ public class PostDaoImpl extends PostDao {
         return findAllPostsByDateBetween(date, date, fetchTags);
     }
 
+    @Override
     public List<Post> findAllPostsByDateBetween(LocalDateTime start, LocalDateTime end, boolean fetchTags) {
         return findAllPostsByDateBetween(start, end, fetchTags, DEFAULT_START, DEFAULT_ROWS);
     }
@@ -183,6 +198,8 @@ public class PostDaoImpl extends PostDao {
         return query.getResultList();
     }
 
+    // Internal methods that drive the above methods
+
     private List<Post> findAllPosts(boolean fetchTags, boolean fetchComments, boolean fetchDiffs, int start, int rows) {
         CriteriaQuery<Post> criteriaQuery = getEntityManager().getCriteriaBuilder().createQuery(Post.class);
         Root<Post> root = criteriaQuery.from(Post.class);
@@ -208,5 +225,36 @@ public class PostDaoImpl extends PostDao {
         query.setMaxResults(rows);
 
         return query.getResultList();
+    }
+
+
+    private List<Post> findAllPostsByPublished(boolean isPublished, int start, int rows) {
+        CriteriaBuilder criteriaBuilder = criteriaBuilder();
+        CriteriaQuery<Post> criteriaQuery = criteriaQuery();
+        Root<Post> root = criteriaQuery.from(Post.class);
+        root.fetch("author");
+
+        criteriaQuery.where(criteriaBuilder.equal(root.get("published"), Boolean.valueOf(isPublished)));
+
+        TypedQuery<Post> query = getEntityManager().createQuery(criteriaQuery);
+        query.setFirstResult(start);
+        query.setMaxResults(rows);
+
+        return query.getResultList();
+    }
+
+    private Long countAllByPublished(boolean isPublished) {
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        Root<Post> root = q.from(Post.class);
+        root.join("author");
+
+        Path<Boolean> published = root.get("published");
+        Predicate predicate = cb.equal(published, Boolean.valueOf(isPublished));
+        q.select(cb.count(root));
+        q.where(predicate);
+
+        TypedQuery<Long> query = getEntityManager().createQuery(q);
+        return query.getSingleResult();
     }
 }
