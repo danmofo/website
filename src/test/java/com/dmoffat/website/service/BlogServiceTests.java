@@ -286,6 +286,7 @@ public class BlogServiceTests extends IntegrationTest {
 
 	@Test
 	public void shouldFindTagByValue() throws Exception {
+		// todo: this always passes...
 		assertNotNull(blogService.findTagByValue(tag.getValue()));
 	}
 
