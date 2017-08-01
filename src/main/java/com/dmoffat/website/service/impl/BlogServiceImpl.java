@@ -26,6 +26,7 @@ import java.util.Objects;
  * todo: test all of the dao / service methods that call the non-PageRequest variant with default values
  * todo: write generic count query (that includes the where clause!)
  * todo: add a default page request value if it's null
+ * todo: check that the page is actually valid instead of returning an empty result set.
  * @author dan
  */
 @Transactional
