@@ -14,4 +14,5 @@ public interface TimeProvider {
     LocalDateTime now();
     LocalDateTime tomorrow();
     LocalDateTime yesterday();
+    LocalDateTime lastMonth();
 }

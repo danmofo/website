@@ -23,4 +23,9 @@ public class TimeProviderImpl implements TimeProvider {
     public LocalDateTime yesterday() {
         return now().minusDays(1);
     }
+
+    @Override
+    public LocalDateTime lastMonth() {
+        return now().minusMonths(1);
+    }
 }
