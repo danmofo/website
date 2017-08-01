@@ -22,7 +22,7 @@ public class PaginationITests extends IntegrationTest {
 
     @Test
     public void test() throws Exception {
-        Page<Post> postPage = blogService.findAllPosts(PageRequest.firstPage());
+        Page<Post> postPage = blogService.findAllPosts();
 
         System.out.println(postPage);
 

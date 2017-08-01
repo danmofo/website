@@ -1,11 +1,12 @@
 package com.dmoffat.website.rest.impl;
 
 import com.dmoffat.website.rest.ApiResponse;
-import com.google.common.base.Joiner;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 /**
+ * A generic error API response
+ *
  * @author dan
  */
 public final class ErrorApiResponse implements ApiResponse {

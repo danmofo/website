@@ -1,5 +1,6 @@
 package com.dmoffat.website.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import name.fraser.neil.plaintext.diff_match_patch;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,25 +16,32 @@ import java.util.*;
 public class Post extends BaseEntity {
 
     @NotEmpty
+    @JsonView(Views.Summary.class)
     private String title;
 
     // todo: validate this properly
     @NotEmpty
+    @JsonView(Views.Summary.class)
     private String permalink;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "author_id")
+    @JsonView(Views.Summary.class)
     private Author author;
 
     @NotEmpty
+    @JsonView(Views.Summary.class)
     private String content;
 
     @Column(name = "html_content")
+    @JsonView(Views.Summary.class)
     private String htmlContent;
 
+    @JsonView(Views.Summary.class)
     private boolean published = false;
 
     @Column(name = "posted_on")
+    @JsonView(Views.Summary.class)
     private LocalDateTime posted;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -41,17 +49,22 @@ public class Post extends BaseEntity {
             name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonView(Views.Detailed.class)
     private Set<Tag> tags;
 
     @OneToMany(mappedBy = "post")
+    @JsonView(Views.Detailed.class)
     private Set<Comment> comments;
 
+    @JsonView(Views.Summary.class)
     private Boolean archived = false;
 
     @OneToMany(mappedBy = "post")
+    @JsonView(Views.Detailed.class)
     private List<Patch> diffs;
 
     @Column(name = "original_content")
+    @JsonView(Views.Summary.class)
     private String originalContent;
 
     public int revisionCount() {

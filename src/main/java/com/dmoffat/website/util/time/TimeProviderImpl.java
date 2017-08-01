@@ -13,4 +13,14 @@ public class TimeProviderImpl implements TimeProvider {
     public LocalDateTime now() {
         return LocalDateTime.now();
     }
+
+    @Override
+    public LocalDateTime tomorrow() {
+        return now().plusDays(1);
+    }
+
+    @Override
+    public LocalDateTime yesterday() {
+        return now().minusDays(1);
+    }
 }

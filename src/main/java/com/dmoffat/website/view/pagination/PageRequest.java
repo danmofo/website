@@ -12,7 +12,9 @@ public interface PageRequest {
     Integer getPage();
     Integer getRows();
     Sort getSort();
+    Integer getStartCount();
 
+    // Returns a PageRequest for the first page
     static PageRequest firstPage() {
         return new PageRequestImpl(1);
     }

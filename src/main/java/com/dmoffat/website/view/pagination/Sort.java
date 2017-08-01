@@ -24,6 +24,14 @@ public class Sort {
         this.field = field;
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public Field getField() {
+        return field;
+    }
+
     public enum Direction {
         ASCENDING,
         DESCENDING

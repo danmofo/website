@@ -1,6 +1,7 @@
 package com.dmoffat.website.view.pagination;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Used for displaying partial result sets and pagination.
@@ -22,16 +23,18 @@ import java.util.Collections;
  *
  * @author danielmoffat
  */
-public interface Page<T> {
+public interface Page<T> extends Iterable<T> {
 
     // Represents a page with no results. Any queries that return no results will return this versus null.
     static <T> Page<T> emptyPage() {
         return new PageImpl<>(Collections.emptyList(), PageRequest.firstPage(), 0L);
     }
 
+    List<T> getResults();
     Long getTotalResults();
     PageRequest nextPage();
     PageRequest prevPage();
     PageRequest lastPage();
     PageRequest firstPage();
+    PageRequest getPageRequest();
 }

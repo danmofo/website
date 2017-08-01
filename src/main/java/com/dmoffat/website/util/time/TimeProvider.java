@@ -12,4 +12,6 @@ import java.time.LocalDateTime;
  */
 public interface TimeProvider {
     LocalDateTime now();
+    LocalDateTime tomorrow();
+    LocalDateTime yesterday();
 }

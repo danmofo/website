@@ -4,10 +4,7 @@ import com.dmoffat.website.dao.CommentDao;
 import com.dmoffat.website.dao.PatchDao;
 import com.dmoffat.website.dao.PostDao;
 import com.dmoffat.website.dao.TagDao;
-import com.dmoffat.website.model.Comment;
-import com.dmoffat.website.model.Patch;
-import com.dmoffat.website.model.Post;
-import com.dmoffat.website.model.Tag;
+import com.dmoffat.website.model.*;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.time.TimeProvider;
 import com.dmoffat.website.view.pagination.Page;
@@ -26,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * todo: test all of the dao / service methods that call the non-PageRequest variant with default values
+ * todo: write generic count query (that includes the where clause!)
  * @author dan
  */
 @Transactional
@@ -57,30 +56,53 @@ public class BlogServiceImpl implements BlogService {
             return Page.emptyPage();
         }
 
-        List<Post> posts = postDao.findAllPostsWithTags((pageRequest.getPage() - 1) * 10, pageRequest.getRows());
+        List<Post> posts = postDao.findAll(pageRequest.getStartCount(), pageRequest.getRows());
         Long totalRows = postDao.count();
 
         return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
-    public List<Post> findAllPosts() {
-        return postDao.findAll();
+    public Page<Post> findAllPosts() {
+        return findAllPosts(PageRequest.firstPage());
     }
 
     @Override
-    public List<Post> findAllPostsWithTags() {
-        return postDao.findAllPostsWithTags();
+    public Page<Post> findAllPostsWithTags() {
+        return findAllPostsWithTags(PageRequest.firstPage());
     }
 
     @Override
-    public List<Post> findAllPostsWithTagsAndComments() {
-        return postDao.findAllPostsWithTagsAndComments();
+    public Page<Post> findAllPostsWithTags(PageRequest pageRequest) {
+        List<Post> posts = postDao.findAllPostsWithTags();
+        Long totalRows = postDao.count();
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
-    public List<Post> findAllPostsWithTagsAndCommentsAndDiffs() {
-        return postDao.findAllPostsWithTagsAndCommentsAndDiffs();
+    public Page<Post> findAllPostsWithTagsAndComments() {
+        return findAllPostsWithTagsAndComments(PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findAllPostsWithTagsAndComments(PageRequest pageRequest) {
+        List<Post> posts = postDao.findAllPostsWithTagsAndComments();
+        Long totalRows = postDao.count();
+        return new PageImpl<>(posts, pageRequest, totalRows);
+    }
+
+    @Override
+    public Page<Post> findAllPostsWithTagsAndCommentsAndDiffs() {
+        return findAllPostsWithTagsAndCommentsAndDiffs(PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findAllPostsWithTagsAndCommentsAndDiffs(PageRequest pageRequest) {
+        List<Post> posts = postDao.findAllPostsWithTagsAndCommentsAndDiffs();
+        Long totalRows = postDao.count();
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
@@ -221,13 +243,25 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Tag> findAllTags() {
-        return tagDao.findAll();
+    public Page<Tag> findAllTags() {
+        return findAllTags(PageRequest.firstPage());
     }
 
     @Override
-    public List<Comment> findAllComments() {
-        return commentDao.findAll();
+    public Page<Tag> findAllTags(PageRequest pageRequest) {
+//        return tagDao.findAll();
+        return null;
+    }
+
+    @Override
+    public Page<Comment> findAllComments() {
+        return findAllComments(PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Comment> findAllComments(PageRequest pageRequest) {
+//        return commentDao.findAll();
+        return null;
     }
 
     @Override
@@ -238,30 +272,54 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Post> findPostByAuthor(String authorName) {
+    public Page<Post> findPostByAuthor(String authorName) {
+        return findPostByAuthor(authorName, PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findPostByAuthor(String authorName, PageRequest pageRequest) {
         Objects.requireNonNull(authorName, "authorName cannot be null");
 
-        return postDao.findAllPostsByAuthor(authorName, true);
+        List<Post> posts = postDao.findAllPostsByAuthor(authorName, true);
+        Long totalRows = postDao.countPostsByAuthor(authorName);
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
-    public List<Post> findPostByDate(LocalDateTime date) {
+    public Page<Post> findPostByDate(LocalDateTime date) {
+        return findPostByDate(date, PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findPostByDate(LocalDateTime date, PageRequest pageRequest) {
         Objects.requireNonNull(date, "date cannot be null");
 
-        return postDao.findAllPostsByDate(date, true);
+        List<Post> posts = postDao.findAllPostsByDate(date, true);
+        Long totalRows = postDao.countPostsByDate(date);
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
-    public List<Post> findPostBetween(LocalDateTime start, LocalDateTime end) {
+    public Page<Post> findPostBetween(LocalDateTime start, LocalDateTime end) {
+        return findPostBetween(start, end, PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findPostBetween(LocalDateTime start, LocalDateTime end, PageRequest pageRequest) {
         Objects.requireNonNull(start, "startDate cannot be null");
         Objects.requireNonNull(end, "endDate cannot be null");
 
-        return postDao.findAllPostsByDateBetween(start, end, true);
+        List<Post> posts = postDao.findAllPostsByDateBetween(start, end, true);
+        Long totalRows = postDao.countPostsByDateBetween(start, end);
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override
-    public List<Post> findRecentPosts() {
-        return findPostBetween(timeProvider.now().minusMonths(1), timeProvider.now());
+    public Page<Post> findRecentPosts() {
+        return findPostBetween(timeProvider.now().minusMonths(1), timeProvider.now(), PageRequest.firstPage());
     }
 
     @Override

@@ -1,13 +1,24 @@
 package com.dmoffat.website.view.pagination;
 
+import com.dmoffat.website.model.Views;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author danielmoffat
  */
 public class PageImpl<T> implements Page<T> {
+
+    @JsonProperty("params")
     private PageRequest pageRequest;
+
+    @JsonView(Views.Summary.class)
     private List<T> items;
+
     private Long resultCount;
     private int currentPage;
     private int totalPages;
@@ -31,6 +42,21 @@ public class PageImpl<T> implements Page<T> {
 
     private boolean hasPrevPage() {
         return currentPage - 1 >= 1;
+    }
+
+    @Override
+    public PageRequest getPageRequest() {
+        return pageRequest;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return items.iterator();
+    }
+
+    @Override
+    public List<T> getResults() {
+        return Collections.unmodifiableList(items);
     }
 
     @Override

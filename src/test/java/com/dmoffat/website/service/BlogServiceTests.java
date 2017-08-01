@@ -6,6 +6,7 @@ import com.dmoffat.website.model.Comment;
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.test.IntegrationTest;
+import com.dmoffat.website.view.pagination.Page;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -297,23 +298,23 @@ public class BlogServiceTests extends IntegrationTest {
 
 	@Test
 	public void shouldFindPostByAuthor() throws Exception {
-		List<Post> postByAuthor = blogService.findPostByAuthor("Mr Once Only");
-		assertThat(postByAuthor, hasSize(1));
+		Page<Post> postByAuthor = blogService.findPostByAuthor("Mr Once Only");
+		assertThat(postByAuthor.getResults(), hasSize(1));
 	}
 
 	@Test
 	public void shouldFindPostsBetweenTwoDates() throws Exception {
 		LocalDateTime start = fakeCreatedDate.minusDays(1);
 		LocalDateTime end = fakeCreatedDate.plusDays(1);
-		List<Post> posts = blogService.findPostBetween(start, end);
+		Page<Post> posts = blogService.findPostBetween(start, end);
 
-		assertThat(posts, hasSize(1));
+		assertThat(posts.getResults(), hasSize(1));
 	}
 
 	@Test
 	public void shouldFindPostsOnASpecificDate() throws Exception {
-		List<Post> postByDate = blogService.findPostByDate(postWithFakeCreatedDate.getCreated());
-		assertThat(postByDate, hasSize(1));
+		Page<Post> postByDate = blogService.findPostByDate(postWithFakeCreatedDate.getCreated());
+		assertThat(postByDate.getResults(), hasSize(1));
 	}
 
 	@Test

@@ -1,8 +1,10 @@
 package com.dmoffat.website.model;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author danielmoffat
@@ -12,6 +14,7 @@ import javax.persistence.*;
 public class Author extends BaseEntity {
 
     @NotEmpty
+    @JsonView(Views.Summary.class)
     private String name;
 
     public Author() {

@@ -2,14 +2,15 @@ package com.dmoffat.website.controller;
 
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.User;
+import com.dmoffat.website.model.Views;
 import com.dmoffat.website.rest.ApiResponse;
-import com.dmoffat.website.rest.impl.AuthenticationApiResponse;
-import com.dmoffat.website.rest.impl.ErrorApiResponse;
-import com.dmoffat.website.rest.impl.SuccessApiResponse;
+import com.dmoffat.website.rest.impl.*;
 import com.dmoffat.website.service.AuthenticationService;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.BeanUtils;
 import com.dmoffat.website.util.WebUtils;
+import com.dmoffat.website.view.pagination.Page;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -69,9 +69,11 @@ public class AdminController {
     }
 
     @GetMapping("/management/post/list")
+    @JsonView(Views.Summary.class)
     public ResponseEntity<ApiResponse> listPosts() {
-        List<Post> posts = blogService.findAllPostsWithTagsAndComments();
-        return new ResponseEntity<>(new SuccessApiResponse.Builder().addPayload("posts", posts).build(), HttpStatus.OK);
+        Page<Post> posts = blogService.findAllPosts();
+
+        return new ResponseEntity<>(new PagedApiResponse(posts), HttpStatus.OK);
     }
 
     @PostMapping("/management/post/new")

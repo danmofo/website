@@ -2,6 +2,7 @@ package com.dmoffat.website.controller;
 
 import com.dmoffat.website.model.Post;
 import com.dmoffat.website.service.BlogService;
+import com.dmoffat.website.view.pagination.Page;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
 
 /**
  * @author danielmoffat
@@ -29,7 +28,7 @@ public class BlogController {
     // List the latest blog posts
     @GetMapping(path = "/blog/")
     public String home(Model m) {
-        List<Post> posts = blogService.findAllPosts();
+        Page<Post> posts = blogService.findAllPosts();
 
         m.addAttribute("posts", posts);
 

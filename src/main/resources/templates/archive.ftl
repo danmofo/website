@@ -2,7 +2,7 @@
 <@layout.general>
 <h1>Post archive</h1>
 
-<#list posts as post>
+<#list posts.results as post>
     <div class="post">
         <h2>${post.author}</h2>
         <p>${post.content}</p>

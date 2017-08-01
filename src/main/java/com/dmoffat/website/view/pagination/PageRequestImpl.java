@@ -1,8 +1,12 @@
 package com.dmoffat.website.view.pagination;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * @author danielmoffat
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PageRequestImpl implements PageRequest {
     private Integer page    = 1;
     private Integer rows    = 10;
@@ -22,6 +26,12 @@ public class PageRequestImpl implements PageRequest {
         this.page = page;
         this.rows = rows;
         this.sort = sort;
+    }
+
+    @Override
+    @JsonIgnore
+    public Integer getStartCount() {
+        return (page - 1) * 10;
     }
 
     @Override

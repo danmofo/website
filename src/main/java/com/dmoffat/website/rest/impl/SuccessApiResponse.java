@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * A generic success API response
+ *
  * @author dan
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
