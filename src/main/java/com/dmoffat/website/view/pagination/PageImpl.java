@@ -20,6 +20,7 @@ public class PageImpl<T> implements Page<T> {
     private List<T> items;
 
     private Long resultCount;
+
     private int currentPage;
     private int totalPages;
 
@@ -36,14 +37,19 @@ public class PageImpl<T> implements Page<T> {
         return (int)result;
     }
 
-    private boolean hasNextPage() {
+    @JsonView(Views.Summary.class)
+    @Override
+    public boolean hasNextPage() {
         return currentPage + 1 <= totalPages;
     }
 
-    private boolean hasPrevPage() {
+    @JsonView(Views.Summary.class)
+    @Override
+    public boolean hasPrevPage() {
         return currentPage - 1 >= 1;
     }
 
+    @JsonView(Views.Summary.class)
     @Override
     public PageRequest getPageRequest() {
         return pageRequest;

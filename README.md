@@ -40,3 +40,5 @@ There are a mixture of unit / integration tests available, to run them, make sur
 - Add common code to a git repo
 - Add pagination to things which return a huge amount of items
 - Rethink the fetching strategy, since pagination is super slow when eagerly fetching since Hibernate does the limit / offset entirely in memory :/
+- Add sort to service methods
+- Add tests for service methods that call the other methods with default values.

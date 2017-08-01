@@ -1,6 +1,5 @@
 package com.dmoffat.website.view.pagination;
 
-import com.dmoffat.website.model.Post;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.test.IntegrationTest;
 import org.junit.Test;
@@ -9,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static junit.framework.TestCase.fail;
 
 /**
- * Tests pagination related functionality
+ * Tests pagination related functionality against a real database
  *
- * todo: don't rely on existing database state.
+ * todo: don't rely on existing database state - create it from scatch
  *
  * @author danielmoffat
  */
@@ -22,14 +21,6 @@ public class PaginationITests extends IntegrationTest {
 
     @Test
     public void test() throws Exception {
-        Page<Post> postPage = blogService.findAllPosts();
-
-        System.out.println(postPage);
-
-        PageRequest secondPage = postPage.nextPage();
-
-        System.out.println(blogService.findAllPosts(secondPage));
-
         fail("Finish me.");
     }
 }

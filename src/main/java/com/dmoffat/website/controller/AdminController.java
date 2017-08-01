@@ -4,12 +4,16 @@ import com.dmoffat.website.model.Post;
 import com.dmoffat.website.model.User;
 import com.dmoffat.website.model.Views;
 import com.dmoffat.website.rest.ApiResponse;
-import com.dmoffat.website.rest.impl.*;
+import com.dmoffat.website.rest.impl.AuthenticationApiResponse;
+import com.dmoffat.website.rest.impl.ErrorApiResponse;
+import com.dmoffat.website.rest.impl.PagedApiResponse;
+import com.dmoffat.website.rest.impl.SuccessApiResponse;
 import com.dmoffat.website.service.AuthenticationService;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.BeanUtils;
 import com.dmoffat.website.util.WebUtils;
 import com.dmoffat.website.view.pagination.Page;
+import com.dmoffat.website.view.pagination.PageRequest;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -21,10 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.SmartValidator;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +71,8 @@ public class AdminController {
 
     @GetMapping("/management/post/list")
     @JsonView(Views.Summary.class)
-    public ResponseEntity<ApiResponse> listPosts() {
-        Page<Post> posts = blogService.findAllPosts();
+    public ResponseEntity<ApiResponse> listPosts(@RequestAttribute(name = "pageRequest") PageRequest pageRequest) {
+        Page<Post> posts = blogService.findAllPosts(pageRequest);
 
         return new ResponseEntity<>(new PagedApiResponse(posts), HttpStatus.OK);
     }

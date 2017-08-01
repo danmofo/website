@@ -8,13 +8,21 @@ import com.dmoffat.website.model.Post;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.service.impl.BlogServiceImpl;
 import com.dmoffat.website.test.UnitTest;
+import com.dmoffat.website.util.TestUtils;
 import com.dmoffat.website.util.time.TimeProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.Collections;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.when;
+
 /**
- * Tests pagination related functionality
+ * Tests pagination related functionality against mocked dependencies, these don't require a database.
  *
  * @author danielmoffat
  */
@@ -33,12 +41,22 @@ public class PaginationTests extends UnitTest {
     }
 
     @Test
-    public void test() throws Exception {
-        PageRequest request = new PageRequestImpl(1);
+    public void shouldHaveZeroTotalPagesWhenNoPostsAreFound() throws Exception {
+        when(postDao.findAll()).thenReturn(Collections.emptyList());
+        Page<Post> posts = blogService.findAllPosts();
 
-        Page<Post> postPage = blogService.findAllPosts(request);
-        System.out.println(postPage);
-        System.out.println(postPage.nextPage());
+        assertThat(posts.getResults(), hasSize(0));
+        assertFalse(posts.hasNextPage());
+        assertFalse(posts.hasPrevPage());
+    }
 
+    @Test
+    public void shouldHaveOnePageWhenTenPostsAreFound() throws Exception {
+        when(postDao.findAll()).thenReturn(TestUtils.createRandomPosts(10));
+        Page<Post> posts = blogService.findAllPosts();
+
+        assertThat(posts.getResults(), hasSize(10));
+        assertFalse(posts.hasNextPage());
+        assertFalse(posts.hasPrevPage());
     }
 }

@@ -36,5 +36,7 @@ public interface Page<T> extends Iterable<T> {
     PageRequest prevPage();
     PageRequest lastPage();
     PageRequest firstPage();
+    boolean hasNextPage();
+    boolean hasPrevPage();
     PageRequest getPageRequest();
 }

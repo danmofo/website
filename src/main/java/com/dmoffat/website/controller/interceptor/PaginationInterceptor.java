@@ -1,7 +1,9 @@
 package com.dmoffat.website.controller.interceptor;
 
+import com.dmoffat.website.view.pagination.PageRequest;
 import com.dmoffat.website.view.pagination.PageRequestImpl;
 import com.google.common.base.Strings;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * Not sure if this is the correct place to do this.
  *
+ * todo: add support for rows
+ *
  * @author danielmoffat
  */
+@Component
 public class PaginationInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -23,9 +28,12 @@ public class PaginationInterceptor extends HandlerInterceptorAdapter {
         String page = request.getParameter("page");
         String rows = request.getParameter("rows");
 
-        if(!Strings.isNullOrEmpty(page) && !Strings.isNullOrEmpty(rows)) {
-            request.setAttribute("pageRequest", new PageRequestImpl(Integer.valueOf(page)));
+        if(Strings.isNullOrEmpty(page)) {
+            return false;
         }
+
+        PageRequest pageRequest = new PageRequestImpl(Integer.valueOf(page));
+        request.setAttribute("pageRequest", pageRequest);
 
         return true;
     }

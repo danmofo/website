@@ -1,12 +1,14 @@
 package com.dmoffat.website.view.pagination;
 
+import com.dmoffat.website.model.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * @author danielmoffat
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PageRequestImpl implements PageRequest {
     private Integer page    = 1;
     private Integer rows    = 10;
@@ -35,16 +37,19 @@ public class PageRequestImpl implements PageRequest {
     }
 
     @Override
+    @JsonView(Views.Summary.class)
     public Sort getSort() {
         return sort;
     }
 
     @Override
+    @JsonView(Views.Summary.class)
     public Integer getPage() {
         return page;
     }
 
     @Override
+    @JsonView(Views.Summary.class)
     public Integer getRows() {
         return rows;
     }

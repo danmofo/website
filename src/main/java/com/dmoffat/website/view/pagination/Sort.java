@@ -1,5 +1,8 @@
 package com.dmoffat.website.view.pagination;
 
+import com.dmoffat.website.model.Views;
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * todo: add sorting on arbitrary fields, instead of the ones we know are present.
  *
@@ -24,10 +27,12 @@ public class Sort {
         this.field = field;
     }
 
+    @JsonView(Views.Summary.class)
     public Direction getDirection() {
         return direction;
     }
 
+    @JsonView(Views.Summary.class)
     public Field getField() {
         return field;
     }

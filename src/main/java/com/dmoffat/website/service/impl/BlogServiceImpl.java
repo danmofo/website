@@ -53,7 +53,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Page<Post> findAllPosts(PageRequest pageRequest) {
         if(pageRequest == null) {
-            return Page.emptyPage();
+            pageRequest = PageRequest.firstPage();
         }
 
         List<Post> posts = postDao.findAll(pageRequest.getStartCount(), pageRequest.getRows());
