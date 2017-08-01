@@ -41,6 +41,9 @@ public interface BlogService {
     Page<Post> findAllPosts();
     Page<Post> findAllPosts(PageRequest pageRequest);
 
+    Page<Post> findAllPublishedPosts();
+    Page<Post> findAllPublishedPosts(PageRequest pageRequest);
+
     Page<Post> findAllPostsWithTags();
     Page<Post> findAllPostsWithTags(PageRequest pageRequest);
 

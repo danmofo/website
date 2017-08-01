@@ -336,4 +336,11 @@ public class BlogServiceTests extends IntegrationTest {
 		blogService.archive(post.getId());
 		assertTrue(post.isArchived());
 	}
+
+	@Test
+	public void shouldFindPostsThatArePublished() throws Exception {
+		Page<Post> publishedPosts = blogService.findAllPublishedPosts();
+
+		assertTrue("Expected 1, but got: " + publishedPosts.getTotalResults(),publishedPosts.getTotalResults() == 1);
+	}
 }

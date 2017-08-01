@@ -23,6 +23,10 @@ public abstract class PostDao extends GenericJpaDao<Post, Long> {
         setType(Post.class);
     }
 
+    public abstract List<Post> findAllPublishedPosts();
+    public abstract List<Post> findAllPublishedPosts(int start, int rows);
+    public abstract Long countPublishedPosts();
+
     public abstract List<Post> findAllPostsWithTags();
     public abstract List<Post> findAllPostsWithTags(int start, int rows);
 

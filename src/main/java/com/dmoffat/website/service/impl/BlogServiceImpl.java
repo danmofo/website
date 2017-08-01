@@ -25,6 +25,7 @@ import java.util.Objects;
 /**
  * todo: test all of the dao / service methods that call the non-PageRequest variant with default values
  * todo: write generic count query (that includes the where clause!)
+ * todo: add a default page request value if it's null
  * @author dan
  */
 @Transactional
@@ -65,6 +66,23 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Page<Post> findAllPosts() {
         return findAllPosts(PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findAllPublishedPosts() {
+        return findAllPublishedPosts(PageRequest.firstPage());
+    }
+
+    @Override
+    public Page<Post> findAllPublishedPosts(PageRequest pageRequest) {
+        if(pageRequest == null) {
+            pageRequest = PageRequest.firstPage();
+        }
+
+        List<Post> posts = postDao.findAllPublishedPosts(pageRequest.getStartCount(), pageRequest.getRows());
+        Long totalRows = postDao.countPublishedPosts();
+
+        return new PageImpl<>(posts, pageRequest, totalRows);
     }
 
     @Override

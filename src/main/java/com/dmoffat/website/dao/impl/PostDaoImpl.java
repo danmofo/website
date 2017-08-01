@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +18,21 @@ import java.util.List;
 public class PostDaoImpl extends PostDao {
     private static final int DEFAULT_START = 0;
     private static final int DEFAULT_ROWS = 10;
+
+    @Override
+    public List<Post> findAllPublishedPosts() {
+        return findAllPublishedPosts(DEFAULT_START, DEFAULT_ROWS);
+    }
+
+    @Override
+    public List<Post> findAllPublishedPosts(int start, int rows) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Long countPublishedPosts() {
+        return 0L;
+    }
 
     @Override
     public List<Post> findAllPostsWithTags() {
