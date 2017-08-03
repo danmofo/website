@@ -2,7 +2,7 @@
 
 > We need more blog systems
 >
-> --**<cite>No one ever</cite>**
+> -**<cite>No one ever</cite>**
 
 This is the source code that powers my personal blog. It was written to demonstrate my experience with Spring / Hibernate.
 
@@ -34,7 +34,6 @@ There are a mixture of unit / integration tests available, to run them, make sur
 - todo
 
 ## TODO
-- Add webpack for front-end build (see `spring-boot-webpack` for integration notes)
 - Externalise all secrets / credentials
 - Finish other todos littered throughout the source code
 - Add common code to a git repo
