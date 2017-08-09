@@ -34,7 +34,8 @@
     "webpack": "^2.5.1",
     "webpack-dev-server": "^2.4.5",
     "webpack-manifest-plugin": "^1.1.0",
-    "webpack-shell-plugin": "^0.5.0"
+    "webpack-shell-plugin": "^0.5.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "dependencies": {
     "vue-template-compiler": "^2.3.3"

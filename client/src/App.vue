@@ -1,16 +1,21 @@
 <template>
   <div id="app">
     <img src="./images/favicon-196x196.png" alt="" />
-    <h1>{{ msg }}</h1>
+    <create-post-form></create-post-form>
   </div>
 </template>
 
 <script>
+import CreatePostForm from './components/post/CreatePostForm.vue'
+
 export default {
   name: 'app',
+  components: {
+    'create-post-form': CreatePostForm
+  },
   data () {
     return {
-      msg: 'Hello world!'
+
     }
   }
 }
