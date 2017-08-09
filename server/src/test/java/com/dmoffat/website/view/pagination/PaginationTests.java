@@ -19,6 +19,7 @@ import java.util.Collections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -52,11 +53,12 @@ public class PaginationTests extends UnitTest {
 
     @Test
     public void shouldHaveOnePageWhenTenPostsAreFound() throws Exception {
-        when(postDao.findAll()).thenReturn(TestUtils.createRandomPosts(10));
+        when(postDao.findAll(0, 10)).thenReturn(TestUtils.createRandomPosts(10));
         Page<Post> posts = blogService.findAllPosts();
 
         assertThat(posts.getResults(), hasSize(10));
         assertFalse(posts.hasNextPage());
         assertFalse(posts.hasPrevPage());
+        assertTrue(posts.getPageRequest().getPage() == 1);
     }
 }

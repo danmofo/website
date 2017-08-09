@@ -29,4 +29,16 @@ public class TagDaoImpl extends TagDao {
 
         return result;
     }
+
+    @Override
+    public Tag findOrCreateIfDoesntExist(Tag tag) {
+        Tag lookup = findOneByValue(tag.getValue());
+
+        if(lookup == null) {
+            create(tag);
+            return tag;
+        }
+
+        return lookup;
+    }
 }

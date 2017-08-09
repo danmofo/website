@@ -12,4 +12,5 @@ public abstract class TagDao extends GenericJpaDao<Tag, Long> {
     }
 
     public abstract Tag findOneByValue(String value);
+    public abstract Tag findOrCreateIfDoesntExist(Tag tag);
 }

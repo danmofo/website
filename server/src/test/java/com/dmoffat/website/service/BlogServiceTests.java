@@ -259,6 +259,8 @@ public class BlogServiceTests extends IntegrationTest {
 
 		blogService.addTagsTo(post, tags);
 
+		System.out.println(post.getTags().size());
+
 		assertTrue(post.getTags().size() == 3);
 	}
 

@@ -44,7 +44,7 @@ public class Post extends BaseEntity {
     @JsonView(Views.Summary.class)
     private LocalDateTime posted;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "post_tag",
             joinColumns = @JoinColumn(name = "post_id"),

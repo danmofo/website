@@ -4,7 +4,10 @@ import com.dmoffat.website.dao.CommentDao;
 import com.dmoffat.website.dao.PatchDao;
 import com.dmoffat.website.dao.PostDao;
 import com.dmoffat.website.dao.TagDao;
-import com.dmoffat.website.model.*;
+import com.dmoffat.website.model.Comment;
+import com.dmoffat.website.model.Patch;
+import com.dmoffat.website.model.Post;
+import com.dmoffat.website.model.Tag;
 import com.dmoffat.website.service.BlogService;
 import com.dmoffat.website.util.time.TimeProvider;
 import com.dmoffat.website.view.pagination.Page;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * todo: test all of the dao / service methods that call the non-PageRequest variant with default values
@@ -128,6 +132,10 @@ public class BlogServiceImpl implements BlogService {
     public void save(Post post) {
         Objects.requireNonNull(post, "post cannot be null.");
 
+        // Lookup any tags attached to the post, creating them if they don't exist. (otherwise org.hibernate.TransientObjectException is thrown when persisting.)
+        // Since tags aren't cascaded, we have to manually add them to the database.
+        post.setTags(post.getTags().stream().map(tag -> tagDao.findOrCreateIfDoesntExist(tag)).collect(Collectors.toSet()));
+
         post.setHtmlContent(markdownRenderer.render(markdownParser.parse(post.getContent())));
         post.setOriginalContent(post.getContent());
 
@@ -213,8 +221,10 @@ public class BlogServiceImpl implements BlogService {
         Objects.requireNonNull(post, "post cannot be null");
         Objects.requireNonNull(tags, "tags cannot be null");
 
-        tags.forEach(tag -> post.addTag(tag));
-        postDao.update(post);
+        tags.forEach(tag -> {
+            post.addTag(tag);
+            tagDao.findOrCreateIfDoesntExist(tag);
+        });
     }
 
     @Override
