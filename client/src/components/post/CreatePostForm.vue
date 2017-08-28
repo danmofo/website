@@ -13,30 +13,28 @@ function random(max = 100) {
 import 'whatwg-fetch'
 
 class PostApiService {
-  constructor (endpoint = '/management/post/') {
-    this.endpoint = endpoint;
-  }
-
-  add (post) {
+  static add (post) {
     console.log('Adding post', post);
-    console.log(document.cookie);
-
-    fetch(this.endpoint + 'new', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkYW5tb2ZvIn0.8LvUyPdxtFexVEuNLJoG45ht3rkuF5oFmLFLIcoleW7CwwECdLTFZbD7CpUQdPupHDS7Dr8Q45pVLtHWz10KRg'
-      },
-      body: JSON.stringify(post)
-    }).then(function(response) {
-      console.log(response)
+    
+    return postAsJsonWithBody('/management/post/new', post).then(response => {
+      // todo: parse response
+      return response;
     });
-
   }
-
 }
 
-let service = new PostApiService()
+function postAsJsonWithBody(url, requestBody) {
+    if(!url) throw Error('No url provided.');
+
+    return fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+}
 
 let post = {
   "title": "My first post",
@@ -55,7 +53,7 @@ let post = {
   "content": "# Title \n Some content"
 }
 
-service.add(post);
+PostApiService.add(post);
 
 export default {
   name: 'create-post-form',
