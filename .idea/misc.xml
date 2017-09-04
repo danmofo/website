@@ -6,6 +6,7 @@
         <option value="$PROJECT_DIR$/server/pom.xml" />
         <option value="$USER_HOME$/IdeaProjects/common/target/maven-archiver/pom.properties" />
         <option value="$USER_HOME$/IdeaProjects/common/pom.xml" />
+        <option value="$PROJECT_DIR$/../common/pom.xml" />
       </list>
     </option>
   </component>

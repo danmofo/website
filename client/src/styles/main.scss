@@ -1,13 +1,73 @@
-$primary: #CCCCCC;
+/**
+ *  Main website stylesheet.
+ */
+@import "vendor/normalize";
+@import "vendor/skeleton";
 
+@import "components/navigation";
+
+/**
+ *  Base styles
+ */
 html, body {
   padding: 0;
   margin: 0;
-  font-family: 'Nunito Sans';
   line-height: 1.5;
+  font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #454545;
 }
+
+.brand-name {
+  display: block;
+  font-weight: bold;
+  font-size: 2.2rem;
+  padding-top: 2rem;
+  width: 25rem;
+
+}
+
 
 * {
   box-sizing: border-box;
-  color: red;
+}
+
+/**
+ *  Headers
+ */
+.main-header {
+  background-color: #46494C;
+  color: #fff;
+
+  &__navigation {
+    float: left;
+  }
+
+  &__brand {
+    float: left;
+    margin-right: 2rem;
+  }
+}
+
+.admin-header {
+  background-color: #5E6C77;
+  color: #fff;
+}
+
+.page-header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+}
+
+.page-header__title {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.input-help {
+  display: block;
+  color: #7c7c7c;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
 }
